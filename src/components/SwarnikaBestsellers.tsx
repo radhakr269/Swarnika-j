@@ -21,7 +21,7 @@ export const SwarnikaBestsellers: React.FC = () => {
   const [activeSort, setActiveSort] = useState<SortOption>('featured');
   const [addedId, setAddedId] = useState<string | null>(null);
 
-  // Category filter tabs with counts calculated from ALL_PRODUCTS
+  // Category filter tabs with counts calculated dynamically from ALL_PRODUCTS
   const filterTabs = [
     { id: 'all', label: 'All Pieces', count: ALL_PRODUCTS.length },
     {
@@ -74,8 +74,10 @@ export const SwarnikaBestsellers: React.FC = () => {
   } else if (activeSort === 'newest') {
     displayProducts = [...displayProducts].sort((a, b) => (b.tag === 'New' ? 1 : 0) - (a.tag === 'New' ? 1 : 0));
   } else {
-    // Featured / Bestseller priority
-    displayProducts = [...displayProducts].sort((a, b) => (b.tag === 'Bestseller' ? 1 : 0) - (a.tag === 'Bestseller' ? 1 : 0));
+    // Featured / Bestseller priority: keep Bestsellers first
+    displayProducts = [...displayProducts].sort(
+      (a, b) => (b.tag === 'Bestseller' || b.isBestSeller ? 1 : 0) - (a.tag === 'Bestseller' || a.isBestSeller ? 1 : 0)
+    );
   }
 
   const handleAddToCart = (prod: Product, e: React.MouseEvent) => {
@@ -126,7 +128,7 @@ export const SwarnikaBestsellers: React.FC = () => {
           className="mb-6 sm:mb-8"
         />
 
-        {/* Product Cards Grid */}
+        {/* Product Cards Grid: Balanced 4-Column Luxury Layout on Desktop */}
         {displayProducts.length === 0 ? (
           <div className="p-12 text-center bg-white border border-[#EDE2D4] my-6 space-y-3">
             <Sparkles className="w-8 h-8 text-[#9A7B56] mx-auto" />
@@ -135,6 +137,7 @@ export const SwarnikaBestsellers: React.FC = () => {
               We currently don't have pieces matching this filter criteria. Explore all our signature collections.
             </p>
             <button
+              type="button"
               onClick={() => setSelectedCategory('all')}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A1622] text-white text-xs uppercase tracking-wider font-medium hover:bg-[#381019] transition-colors cursor-pointer"
             >
@@ -143,7 +146,7 @@ export const SwarnikaBestsellers: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4.5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5 md:gap-6">
             {displayProducts.map((prod) => (
               <ProductCard
                 key={prod.id}
