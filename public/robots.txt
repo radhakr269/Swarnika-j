@@ -1,0 +1,18 @@
+# SWARNIKA — Robots Directives
+# Protect private customer accounts and checkout routes from public crawler indexing.
+
+User-agent: *
+Disallow: /account
+Disallow: /account/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /wishlist
+
+Allow: /
+Allow: /shop
+Allow: /women
+Allow: /men
+Allow: /collections
+Allow: /category/
+Allow: /product/
+Allow: /assist/

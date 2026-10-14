@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Sparkles, ShieldCheck, Heart, Award } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { SafeImage } from './SafeImage';
@@ -6,10 +6,20 @@ import { SafeImage } from './SafeImage';
 export const StoryModal: React.FC = () => {
   const { isStoryOpen, setIsStoryOpen } = useShop();
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isStoryOpen) {
+        setIsStoryOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isStoryOpen, setIsStoryOpen]);
+
   if (!isStoryOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true" aria-label="Our Story & Heritage">
       <div
         onClick={() => setIsStoryOpen(false)}
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
@@ -25,13 +35,13 @@ export const StoryModal: React.FC = () => {
 
         <div className="text-center space-y-2 max-w-xl mx-auto">
           <span className="text-[11px] uppercase tracking-[0.28em] text-[#6E5746] font-semibold block">
-            FOUNDED 1994
+            ARTISANAL ATELIER
           </span>
           <h2 className="font-serif-luxury text-3xl sm:text-4xl text-[#201815] font-normal tracking-tight">
             The Swarnika Heritage
           </h2>
           <p className="text-xs sm:text-sm text-[#7A6451] font-light">
-            Three decades of hand-setting precious gemstones and casting certified anti-tarnish jewellery.
+            Dedicated craft in hand-setting stones and shaping timeless silhouettes.
           </p>
         </div>
 
@@ -47,10 +57,10 @@ export const StoryModal: React.FC = () => {
 
           <div className="space-y-4 text-xs sm:text-sm text-[#5C4938] leading-relaxed">
             <p>
-              Born from a revered goldsmith atelier, Swarnika was founded on the conviction that jewellery should never be transient. Every stone is meticulously selected and set to endure generations of celebration.
+              Born from a revered goldsmith tradition, Swarnika is founded on the conviction that jewellery should never be transient. Every stone is meticulously selected and set to accompany life's most meaningful moments.
             </p>
             <p>
-              We bring modern elegance to royal heritage designs, delivering timeless jewellery with authentic hallmarked purity and complimentary insured delivery across India and beyond.
+              We unite modern elegance with classic royal designs, crafting jewellery with rich finishes and thoughtful velvet presentation.
             </p>
           </div>
         </div>
@@ -58,18 +68,18 @@ export const StoryModal: React.FC = () => {
         <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#EDE1D3] text-center text-xs">
           <div className="space-y-1">
             <ShieldCheck className="w-5 h-5 text-[#4A1622] mx-auto" />
-            <div className="font-semibold text-[#201815]">Certified Quality</div>
-            <p className="text-[10px] text-[#7A6451]">Hallmarked & Tested</p>
+            <div className="font-semibold text-[#201815]">Artisanal Quality</div>
+            <p className="text-[10px] text-[#7A6451]">Meticulous Inspection</p>
           </div>
           <div className="space-y-1">
             <Sparkles className="w-5 h-5 text-[#4A1622] mx-auto" />
-            <div className="font-semibold text-[#201815]">Artisan Cast</div>
+            <div className="font-semibold text-[#201815]">Refined Finishes</div>
             <p className="text-[10px] text-[#7A6451]">Master Craftsmanship</p>
           </div>
           <div className="space-y-1">
             <Award className="w-5 h-5 text-[#4A1622] mx-auto" />
-            <div className="font-semibold text-[#201815]">Lifetime Shine</div>
-            <p className="text-[10px] text-[#7A6451]">Anti-tarnish protection</p>
+            <div className="font-semibold text-[#201815]">Signature Polish</div>
+            <p className="text-[10px] text-[#7A6451]">Protective Layering</p>
           </div>
         </div>
       </div>

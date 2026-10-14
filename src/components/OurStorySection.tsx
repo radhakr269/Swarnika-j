@@ -62,7 +62,7 @@ export const OurStorySection: React.FC = () => {
                     SWARNIKA
                   </span>
                   <span className="text-[6px] sm:text-[7px] uppercase tracking-[0.16em] text-[#735F4C]">
-                    EST. 1994
+                    FINE ATELIER
                   </span>
                 </div>
               </div>

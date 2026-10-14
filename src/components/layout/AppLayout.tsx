@@ -11,6 +11,8 @@ import { CheckoutModal } from '../CheckoutModal';
 import { StoryModal } from '../StoryModal';
 import { ToastContainer } from '../ToastContainer';
 
+import { RouteSEO } from '../seo/RouteSEO';
+
 /**
  * AppLayout
  * Reusable application shell providing shared header, footer,
@@ -19,6 +21,9 @@ import { ToastContainer } from '../ToastContainer';
 export const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#201815] flex flex-col font-sans-luxury pb-[calc(3.75rem+env(safe-area-inset-bottom,0px))] md:pb-0">
+      {/* Route-Specific SEO & Privacy Directives */}
+      <RouteSEO />
+
       {/* Shared Header Navigation */}
       <SwarnikaNavbar />
 

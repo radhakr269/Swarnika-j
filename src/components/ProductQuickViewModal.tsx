@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Star, Heart, Check, ShieldCheck, Truck, ShoppingBag, User, Sparkles, ZoomIn, Award } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { SafeImage } from './SafeImage';
@@ -18,6 +18,17 @@ export const ProductQuickViewModal: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState<string>('14');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+
+  // Accessible Escape key listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && quickViewProduct) {
+        setQuickViewProduct(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [quickViewProduct, setQuickViewProduct]);
 
   if (!quickViewProduct) return null;
 
@@ -54,7 +65,7 @@ export const ProductQuickViewModal: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 xs:p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 xs:p-4 sm:p-6" role="dialog" aria-modal="true" aria-label={`Quick View of ${quickViewProduct.name}`}>
       {/* Backdrop */}
       <div
         onClick={() => setQuickViewProduct(null)}

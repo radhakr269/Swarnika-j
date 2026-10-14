@@ -344,14 +344,14 @@ export const SwarnikaNavbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Clean Verified Brand Trust Note (Zero fake phone numbers or hours) */}
+          {/* Clean Verified Brand Note */}
           <div className="pt-3 border-t border-[#E8DECE] flex items-center justify-between text-[11px] text-[#6C5849]">
             <span className="flex items-center gap-1.5 font-medium tracking-wide">
               <Sparkles className="w-3.5 h-3.5 text-[#A77B3D]" />
-              <span>SWARNIKA Fine Jewellery • Est. 1994</span>
+              <span>SWARNIKA Fine Jewellery • Artisanal Collection</span>
             </span>
             <span className="text-[10px] uppercase font-semibold text-[#4A101C] tracking-wider">
-              100% Certified
+              Hand-Finished
             </span>
           </div>
         </div>

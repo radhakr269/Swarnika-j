@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Trash2, ShoppingBag, Heart } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { ALL_PRODUCTS } from '../data/jewelryData';
@@ -15,12 +15,22 @@ export const WishlistDrawer: React.FC = () => {
     setIsCartOpen,
   } = useShop();
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isWishlistOpen) {
+        setIsWishlistOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isWishlistOpen, setIsWishlistOpen]);
+
   if (!isWishlistOpen) return null;
 
   const wishlistProducts = ALL_PRODUCTS.filter((p) => wishlist.includes(p.id));
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-label="Saved Heirlooms Wishlist">
       <div
         onClick={() => setIsWishlistOpen(false)}
         className="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity"

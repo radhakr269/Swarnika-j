@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, RotateCcw, Gift, Tag } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { SafeImage } from './SafeImage';
@@ -23,6 +23,16 @@ export const CartDrawer: React.FC = () => {
 
   const [promoInput, setPromoInput] = useState('');
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isCartOpen) {
+        setIsCartOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCartOpen, setIsCartOpen]);
+
   if (!isCartOpen) return null;
 
   const freeShippingThreshold = 2999;
@@ -39,7 +49,7 @@ export const CartDrawer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-label="Shopping Bag">
       {/* Backdrop */}
       <div
         onClick={() => setIsCartOpen(false)}
@@ -314,15 +324,15 @@ export const CartDrawer: React.FC = () => {
               <div className="grid grid-cols-3 gap-2 pt-1 text-center text-[9.5px] text-[#7A6451]">
                 <div className="flex flex-col items-center">
                   <Truck className="w-3.5 h-3.5 text-[#4A1622] mb-0.5" />
-                  <span>Free Insured Delivery</span>
+                  <span>Complimentary Shipping</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#4A1622] mb-0.5" />
-                  <span>100% Certified</span>
+                  <span>Artisan Handcrafted</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <RotateCcw className="w-3.5 h-3.5 text-[#4A1622] mb-0.5" />
-                  <span>7-Day Returns</span>
+                  <span>Dedicated Support</span>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, X, ArrowRight, Eye, Sparkles } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { ALL_PRODUCTS } from '../data/jewelryData';
@@ -7,6 +7,16 @@ import { SafeImage } from './SafeImage';
 export const SearchModal: React.FC = () => {
   const { isSearchOpen, setIsSearchOpen, setQuickViewProduct } = useShop();
   const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen, setIsSearchOpen]);
 
   if (!isSearchOpen) return null;
 
@@ -20,7 +30,7 @@ export const SearchModal: React.FC = () => {
     : ALL_PRODUCTS.slice(0, 6);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center pt-12 sm:pt-20 p-3 sm:p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center pt-12 sm:pt-20 p-3 sm:p-4" role="dialog" aria-modal="true" aria-label="Search Catalogue">
       <div
         onClick={() => setIsSearchOpen(false)}
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"

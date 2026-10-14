@@ -47,7 +47,7 @@ export const RoutePlaceholderPage: React.FC<RoutePlaceholderProps> = ({
       const formattedSlug = slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : 'Category';
       resolvedTitle = `${formattedSlug} Collection`;
       resolvedPhase = 'Phase 4: Category Architecture';
-      resolvedDesc = `Exclusive handcrafted ${slug || 'jewellery'} designs with verified 18K gold polish and hallmarks.`;
+      resolvedDesc = `Exclusive handcrafted ${slug || 'jewellery'} designs with refined 18K gold-plated finishes.`;
     } else if (path.startsWith('/product/')) {
       resolvedTitle = 'Product Details Atelier';
       resolvedPhase = 'Phase 6: Dedicated Product Page';

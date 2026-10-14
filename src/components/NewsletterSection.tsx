@@ -55,7 +55,7 @@ export const NewsletterSection: React.FC = () => {
                     type="submit"
                     className="bg-[#4A1622] hover:bg-[#381019] text-white text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold px-5 py-2.5 transition-colors shrink-0 shadow-none cursor-pointer"
                   >
-                    SUBSCRIBE
+                    REVEAL 15% CODE
                   </button>
                 </form>
               ) : (

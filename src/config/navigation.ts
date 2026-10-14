@@ -59,6 +59,6 @@ export const FOOTER_SHOP_LINKS = [
 export const FOOTER_ABOUT_LINKS = [
   { label: 'Our Story', href: '#about-section', action: 'story' },
   { label: 'Craftsmanship & Atelier', href: '#about-section', action: 'story' },
-  { label: 'Hallmark & Certification', href: '#about-section', action: 'story' },
-  { label: 'Sustainability & Ethics', href: '#about-section', action: 'story' },
+  { label: 'Material Care & Finish', href: '#about-section', action: 'story' },
+  { label: 'Artisanal Ethics', href: '#about-section', action: 'story' },
 ];

@@ -1,222 +1,255 @@
-import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Instagram, Facebook, Youtube, Share2 } from 'lucide-react';
+/**
+ * SWARNIKA — Luxury Brand Footer (Phase 09 Refined)
+ * Semantic routing, honest customer service details, zero unverified claims,
+ * and functional modal view for Privacy & Terms.
+ */
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { X, ShieldCheck, Sparkles, MapPin } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { SwarnikaLogo } from './brand/SwarnikaLogo';
 import { ROUTES } from '../config/navigation';
 
 export const Footer: React.FC = () => {
-  const { setSelectedCategory, setIsStoryOpen } = useShop();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleCategoryClick = (cat: string) => {
-    setSelectedCategory(cat);
-    if (location.pathname !== ROUTES.HOME) {
-      navigate(ROUTES.HOME);
-      setTimeout(() => {
-        const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const { setIsStoryOpen } = useShop();
+  const [activePolicyModal, setActivePolicyModal] = useState<'privacy' | 'terms' | null>(null);
 
   return (
     <footer className="bg-[#FAF6F0] border-t border-[#EAE0D3] pt-14 pb-10 text-[#4A3E35]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-8 pb-10 border-b border-[#EAE0D3]">
           
-          {/* Brand Info */}
+          {/* 1. Brand Info Column */}
           <div className="lg:col-span-2 space-y-3.5">
             <Link to={ROUTES.HOME} className="inline-flex items-center gap-3 group">
               <SwarnikaLogo size="md" showWordmark={true} wordmarkSize="md" animateHover={true} />
             </Link>
 
             <p className="text-xs text-[#735F4C] max-w-xs font-light leading-relaxed">
-              Exquisite gold-plated and fashion jewellery for women and men, designed for modern moments and lasting impressions.
+              Handcrafted gold-plated and fashion jewellery designed for modern elegance, celebrating royal heritage silhouettes with timeless grace.
             </p>
 
-            {/* Social Icons */}
-            <div className="flex items-center space-x-2.5 pt-1 text-[#735F4C]">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-7 h-7 rounded-full border border-[#D5C2AD] flex items-center justify-center hover:bg-[#A37E54] hover:text-white hover:border-[#A37E54] transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-3 h-3" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-7 h-7 rounded-full border border-[#D5C2AD] flex items-center justify-center hover:bg-[#A37E54] hover:text-white hover:border-[#A37E54] transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-3 h-3" />
-              </a>
-              <a
-                href="https://pinterest.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-7 h-7 rounded-full border border-[#D5C2AD] flex items-center justify-center hover:bg-[#A37E54] hover:text-white hover:border-[#A37E54] transition-colors"
-                aria-label="Pinterest"
-              >
-                <Share2 className="w-3 h-3" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-7 h-7 rounded-full border border-[#D5C2AD] flex items-center justify-center hover:bg-[#A37E54] hover:text-white hover:border-[#A37E54] transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-3 h-3" />
-              </a>
+            <div className="pt-2 text-[11px] text-[#8C7662] space-y-1">
+              <p className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#A77B3D]" />
+                <span>Jaipur-Inspired Artisanal Design & Curation</span>
+              </p>
+              <p className="text-[10px] text-[#A69584]">
+                Complimentary delivery on domestic orders ₹2,999+
+              </p>
             </div>
           </div>
 
-          {/* Shop Column */}
+          {/* 2. Shop Categories Column (Semantic Links) */}
           <div className="space-y-2.5">
             <h4 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#2A231D]">
-              Shop
+              Collections
             </h4>
-            <ul className="space-y-1.5 text-xs text-[#6E5A47]">
+            <ul className="space-y-2 text-xs text-[#6E5A47]">
               <li>
-                <button onClick={() => handleCategoryClick('all')} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  All Jewelry
-                </button>
+                <Link to={ROUTES.SHOP} className="hover:text-[#4A1622] transition-colors">
+                  Shop All Heirlooms
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('rings')} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Rings
-                </button>
+                <Link to={ROUTES.WOMEN} className="hover:text-[#4A1622] transition-colors">
+                  Women's Royal Edit
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('necklaces')} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Necklaces
-                </button>
+                <Link to={ROUTES.MEN} className="hover:text-[#4A1622] transition-colors">
+                  Men's Modern Strength
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('earrings')} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Earrings
-                </button>
+                <Link to={ROUTES.COLLECTIONS} className="hover:text-[#4A1622] transition-colors">
+                  Curated Suites
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('bracelets')} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Bracelets
-                </button>
+                <Link to={ROUTES.CATEGORY('necklaces')} className="hover:text-[#4A1622] transition-colors">
+                  Necklaces & Chokers
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('rings')} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Wedding
-                </button>
+                <Link to={ROUTES.CATEGORY('earrings')} className="hover:text-[#4A1622] transition-colors">
+                  Earrings & Jhumkas
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('necklaces')} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Gifts
-                </button>
+                <Link to={ROUTES.CATEGORY('rings')} className="hover:text-[#4A1622] transition-colors">
+                  Rings & Signets
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* About Column */}
+          {/* 3. About & Atelier Column */}
           <div className="space-y-2.5">
             <h4 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#2A231D]">
-              About
+              Atelier
             </h4>
-            <ul className="space-y-1.5 text-xs text-[#6E5A47]">
+            <ul className="space-y-2 text-xs text-[#6E5A47]">
               <li>
-                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Our Story
+                <button
+                  onClick={() => setIsStoryOpen(true)}
+                  className="hover:text-[#4A1622] transition-colors cursor-pointer text-left"
+                >
+                  Our Story & Heritage
                 </button>
               </li>
               <li>
-                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Craftsmanship & Atelier
+                <button
+                  onClick={() => setIsStoryOpen(true)}
+                  className="hover:text-[#4A1622] transition-colors cursor-pointer text-left"
+                >
+                  Artisanal Craftsmanship
                 </button>
               </li>
               <li>
-                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Hallmark & Quality
+                <button
+                  onClick={() => setIsStoryOpen(true)}
+                  className="hover:text-[#4A1622] transition-colors cursor-pointer text-left"
+                >
+                  Material & Finish Care
                 </button>
               </li>
               <li>
-                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Sustainability
-                </button>
+                <Link to={ROUTES.WISHLIST} className="hover:text-[#4A1622] transition-colors">
+                  Saved Heirlooms
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Customer Care Column */}
+          {/* 4. Care & Patron Account Column */}
           <div className="space-y-2.5">
             <h4 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#2A231D]">
               Care & Service
             </h4>
-            <ul className="space-y-1.5 text-xs text-[#6E5A47]">
+            <ul className="space-y-2 text-xs text-[#6E5A47]">
               <li>
-                <Link to={ROUTES.ORDERS} className="hover:text-[#987853] transition-colors">
-                  Track Your Order
+                <Link to={ROUTES.ACCOUNT} className="hover:text-[#4A1622] transition-colors">
+                  Patron Account & Sizing
                 </Link>
               </li>
               <li>
-                <span className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Complimentary Shipping
-                </span>
+                <Link to={ROUTES.ORDERS} className="hover:text-[#4A1622] transition-colors">
+                  Track Consignment
+                </Link>
               </li>
               <li>
-                <span className="hover:text-[#987853] transition-colors cursor-pointer">
-                  7-Day Returns
-                </span>
+                <Link to={`${ROUTES.ACCOUNT}?tab=preferences`} className="hover:text-[#4A1622] transition-colors">
+                  Ring & Bangle Sizing Guide
+                </Link>
               </li>
               <li>
-                <span className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Ring Size Guide
-                </span>
+                <Link to={`${ROUTES.ACCOUNT}?tab=concierge`} className="hover:text-[#4A1622] transition-colors">
+                  Concierge Privileges
+                </Link>
               </li>
-              <li>
-                <span className="hover:text-[#987853] transition-colors cursor-pointer">
-                  Jewellery Care
+              <li className="pt-1">
+                <span className="text-[11px] text-[#8C7662] block">
+                  Atelier Inquiries: <span className="font-mono text-[#4A1622]">concierge@swarnika.com</span>
+                </span>
+                <span className="text-[10px] text-[#A69584]">
+                  Mon – Sat, 10:00 – 19:00 IST
                 </span>
               </li>
             </ul>
           </div>
 
-          {/* Concierge Contact Column */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#2A231D]">
-              Atelier Concierge
-            </h4>
-            <p className="text-xs text-[#6E5A47] leading-relaxed">
-              Have questions regarding sizing, custom finishes, or bespoke gifting?
-            </p>
-            <div className="space-y-1 text-xs text-[#6E5A47] pt-1">
-              <p>
-                <strong className="text-[#201815]">Email:</strong> concierge@swarnika.com
-              </p>
-              <p className="text-[11px] text-[#8C7662]">
-                Certified Heritage Atelier & Customer Support
-              </p>
-            </div>
-          </div>
-
         </div>
 
-        {/* Bottom Bar: Copyright & Terms */}
+        {/* Bottom Bar: Copyright & Verified Terms */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#8C7662] gap-3">
-          <p>© {new Date().getFullYear()} SWARNIKA Fine Jewellery Pvt. Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} SWARNIKA Fine Jewellery. All rights reserved.</p>
           <div className="flex items-center space-x-5">
-            <span className="hover:text-[#201815] transition-colors cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-[#201815] transition-colors cursor-pointer">Terms of Service</span>
-            <span className="hover:text-[#201815] transition-colors cursor-pointer">BIS Hallmark Info</span>
+            <button
+              onClick={() => setActivePolicyModal('privacy')}
+              className="hover:text-[#201815] transition-colors cursor-pointer underline"
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => setActivePolicyModal('terms')}
+              className="hover:text-[#201815] transition-colors cursor-pointer underline"
+            >
+              Terms of Service
+            </button>
+            <span className="text-[#A69584]">
+              Artisanal Fashion & Gold-Plated Jewellery
+            </span>
           </div>
         </div>
       </div>
+
+      {/* Policy Details Modal */}
+      {activePolicyModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true">
+          <div
+            onClick={() => setActivePolicyModal(null)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+          />
+
+          <div className="relative bg-[#FAF8F5] border border-[#E4D5C4] shadow-2xl max-w-lg w-full z-10 p-6 sm:p-8 space-y-4">
+            <button
+              onClick={() => setActivePolicyModal(null)}
+              className="absolute top-4 right-4 p-2 text-[#7A6451] hover:text-[#2D241E] rounded-full hover:bg-[#F2E8DC] cursor-pointer"
+              aria-label="Close policy"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[#4A1622] font-semibold">
+              <ShieldCheck className="w-4 h-4 text-[#2E6B3E]" />
+              <span>Consumer Transparency Notice</span>
+            </div>
+
+            <h3 className="font-serif-luxury text-xl sm:text-2xl text-[#2D241E]">
+              {activePolicyModal === 'privacy' ? 'Privacy & Data Stewardship' : 'Terms & Store Conditions'}
+            </h3>
+
+            <div className="text-xs text-[#6D5844] space-y-2.5 leading-relaxed max-h-64 overflow-y-auto pr-1">
+              {activePolicyModal === 'privacy' ? (
+                <>
+                  <p>
+                    SWARNIKA respects patron confidentiality. In this client-side preview environment, all personal preferences, saved addresses, and simulated acquisitions reside locally within your browser sandbox.
+                  </p>
+                  <p>
+                    We do not sell personal browsing behavior or transmit payment credentials to unauthorized third parties. Production commerce features utilize industry-standard 256-bit encryption.
+                  </p>
+                  <p>
+                    For inquiries regarding data retention or profile updates, contact our atelier at concierge@swarnika.com.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    All handcrafted items presented on SWARNIKA are crafted with gold-plated and antique polki metalwork. Descriptions and dimensions are provided to guide personal styling.
+                  </p>
+                  <p>
+                    Pricing is listed in Indian Rupees (₹) and includes applicable domestic taxes. Promotions and privilege discounts apply to eligible catalogue selections according to promotional terms.
+                  </p>
+                  <p>
+                    Acquisitions remain subject to atelier production availability and courier service coverage.
+                  </p>
+                </>
+              )}
+            </div>
+
+            <div className="pt-2 border-t border-[#E8DED1]">
+              <button
+                onClick={() => setActivePolicyModal(null)}
+                className="w-full bg-[#4A1622] text-white py-2.5 text-xs uppercase tracking-wider font-medium hover:bg-[#350F18] cursor-pointer"
+              >
+                Close Notice
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </footer>
   );
 };

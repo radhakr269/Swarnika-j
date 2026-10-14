@@ -502,10 +502,10 @@ export const WomenLandingPage: React.FC = () => {
           <div className="flex flex-col items-center space-y-2">
             <RotateCcw className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              7-Day Return Policy
+              Atelier Care & Support
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              Hassle-free return inspection with dedicated doorstep pickup assistance.
+              Dedicated styling assistance and guidance for sizing adjustments and care.
             </p>
           </div>
         </div>

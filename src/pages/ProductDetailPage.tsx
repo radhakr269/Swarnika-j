@@ -425,7 +425,7 @@ export const ProductDetailPage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <RotateCcw className="w-4 h-4 text-[#A77B3D] shrink-0" />
-                  <span>7-Day Return Inspection</span>
+                  <span>Atelier Care & Support</span>
                 </div>
               </div>
             </div>
@@ -505,8 +505,8 @@ export const ProductDetailPage: React.FC = () => {
                 {openAccordion === 'shipping' && (
                   <div className="pb-4 text-xs text-[#5E4A3B] font-light leading-relaxed space-y-1">
                     <p>• Complimentary courier shipping across India on orders exceeding ₹2,999.</p>
-                    <p>• Dispatched in discreet, tamper-evident security cartons.</p>
-                    <p>• 7-day doorstep return inspection with dedicated pickup assistance.</p>
+                    <p>• Dispatched in discreet, tamper-evident presentation packaging.</p>
+                    <p>• Dedicated concierge support for exchange and sizing inquiries.</p>
                   </div>
                 )}
               </div>

@@ -6,7 +6,6 @@
 export const STORE_CONFIG = {
   brandName: 'SWARNIKA',
   brandTagline: 'Timeless Jewellery, Crafted to Be Seen',
-  foundingYear: 1994,
 
   // Commercial Shipping Rules
   freeShippingThreshold: 2999,
@@ -25,7 +24,7 @@ export const STORE_CONFIG = {
     locale: 'en-IN',
   },
 
-  // Contact & Concierge (verified email channel only)
+  // Contact & Concierge (Inquiry channel)
   concierge: {
     email: 'concierge@swarnika.com',
   },
@@ -41,8 +40,8 @@ export const STORE_CONFIG = {
       description: 'Free courier shipping across India on all orders exceeding ₹2,999',
     },
     {
-      title: '7-Day Return Inspection',
-      description: 'Hassle-free return policy with dedicated courier pickup assistance',
+      title: 'Atelier Sizing Assistance',
+      description: 'Dedicated support for sizing adjustments, custom fits, and personal styling',
     },
   ],
 } as const;
