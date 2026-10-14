@@ -1,10 +1,16 @@
 /**
  * SWARNIKA — Customer Account Context
- * Real React context for customer authentication, addresses, order history, and tracking.
- * Provides clean client-side persistence with honest security boundaries.
+ * Real React context for customer account state with honest security boundaries.
+ * 
+ * SECURITY DIRECTIVES:
+ * 1. A new visitor is strictly unauthenticated (guest).
+ * 2. localStorage is never treated as proof of identity.
+ * 3. No arbitrary credentials or fake OTPs mark a customer as authenticated.
+ * 4. No fabricated orders, delivery records, or courier tracking are presented.
+ * 5. Honest guest portal representation until a verified backend is provisioned.
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import {
   CustomerProfile,
   CustomerAddress,
@@ -36,115 +42,39 @@ interface AccountContextType {
   addOrder: (order: CustomerOrder) => void;
   getOrderById: (orderId: string) => CustomerOrder | undefined;
   trackOrderLookup: (orderId: string, contact?: string) => CustomerOrder | undefined;
+  isBackendConfigured: boolean;
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = 'swarnika_auth_session_v1';
-const PROFILE_STORAGE_KEY = 'swarnika_profile_v1';
-const ADDRESSES_STORAGE_KEY = 'swarnika_addresses_v1';
-const ORDERS_STORAGE_KEY = 'swarnika_orders_v1';
-
 export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Authentication status (defaults to true so evaluator can immediately see all screens, with ability to log out or toggle)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    try {
-      const saved = localStorage.getItem(AUTH_STORAGE_KEY);
-      return saved !== null ? JSON.parse(saved) : true;
-    } catch {
-      return true;
-    }
-  });
+  // Authentication status: Strictly unauthenticated by default.
+  // No localStorage or client state is trusted as proof of identity.
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // Customer Profile
-  const [profile, setProfile] = useState<CustomerProfile>(() => {
-    if (typeof window === 'undefined') return DEFAULT_CUSTOMER_PROFILE;
-    try {
-      const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : DEFAULT_CUSTOMER_PROFILE;
-    } catch {
-      return DEFAULT_CUSTOMER_PROFILE;
-    }
-  });
+  // Customer Profile: Clean guest patron template.
+  const [profile, setProfile] = useState<CustomerProfile>(DEFAULT_CUSTOMER_PROFILE);
 
-  // Saved Addresses
-  const [addresses, setAddresses] = useState<CustomerAddress[]>(() => {
-    if (typeof window === 'undefined') return DEFAULT_CUSTOMER_ADDRESSES;
-    try {
-      const saved = localStorage.getItem(ADDRESSES_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : DEFAULT_CUSTOMER_ADDRESSES;
-    } catch {
-      return DEFAULT_CUSTOMER_ADDRESSES;
-    }
-  });
+  // Saved Addresses: Empty for all visitors without authenticated backend.
+  const [addresses, setAddresses] = useState<CustomerAddress[]>(DEFAULT_CUSTOMER_ADDRESSES);
 
-  // Orders
-  const [orders, setOrders] = useState<CustomerOrder[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_ORDERS;
-    try {
-      const saved = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-      return INITIAL_ORDERS;
-    } catch {
-      return INITIAL_ORDERS;
-    }
-  });
+  // Orders: Empty list; no fake orders or fictitious dispatch events.
+  const [orders, setOrders] = useState<CustomerOrder[]>(INITIAL_ORDERS);
 
   // Auth Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authView, setAuthView] = useState<'signin' | 'register' | 'track_lookup'>('signin');
 
-  // Persistence effects
-  useEffect(() => {
-    try {
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(isAuthenticated));
-    } catch {
-      // Ignore write errors in restricted envs
-    }
-  }, [isAuthenticated]);
+  // Backend availability flag
+  const isBackendConfigured = false;
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
-    } catch {
-      // Ignore
-    }
-  }, [profile]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(ADDRESSES_STORAGE_KEY, JSON.stringify(addresses));
-    } catch {
-      // Ignore
-    }
-  }, [addresses]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-    } catch {
-      // Ignore
-    }
-  }, [orders]);
-
-  const login = (emailOrPhone: string, name?: string): boolean => {
-    setIsAuthenticated(true);
-    if (name) {
-      const [first, ...rest] = name.split(' ');
-      setProfile((prev) => ({
-        ...prev,
-        firstName: first || prev.firstName,
-        lastName: rest.join(' ') || prev.lastName,
-        email: emailOrPhone.includes('@') ? emailOrPhone : prev.email,
-        phone: !emailOrPhone.includes('@') ? emailOrPhone : prev.phone,
-      }));
-    }
-    setIsAuthModalOpen(false);
-    return true;
+  /**
+   * Login handler: Without a verified authentication backend,
+   * we refuse to create a false authenticated session or accept arbitrary input.
+   */
+  const login = (_emailOrPhone: string, _name?: string): boolean => {
+    // Truthfully reject authentication attempts until real backend is configured
+    return false;
   };
 
   const logout = () => {
@@ -173,8 +103,7 @@ export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     setAddresses((prev) => {
-      // If marked as default, remove default from others
-      let nextList = prev.map((addr) => ({
+      const nextList = prev.map((addr) => ({
         ...addr,
         isDefaultShipping: address.isDefaultShipping ? false : addr.isDefaultShipping,
         isDefaultBilling: address.isDefaultBilling ? false : addr.isDefaultBilling,
@@ -213,33 +142,18 @@ export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
   };
 
-  const addOrder = (order: CustomerOrder) => {
-    setOrders((prev) => [order, ...prev.filter((o) => o.id !== order.id)]);
+  const addOrder = (_order: CustomerOrder) => {
+    // In compliance with Phase 09 security directives, client cannot invent orders
   };
 
-  const getOrderById = (orderId: string): CustomerOrder | undefined => {
-    const cleanId = orderId.trim().toUpperCase();
-    return orders.find(
-      (o) =>
-        o.id.toUpperCase() === cleanId ||
-        o.orderNumber.toUpperCase() === cleanId ||
-        o.id.toUpperCase() === `SWN-${cleanId}`
-    );
+  const getOrderById = (_orderId: string): CustomerOrder | undefined => {
+    // No unauthenticated local order retrieval
+    return undefined;
   };
 
-  const trackOrderLookup = (orderId: string, contact?: string): CustomerOrder | undefined => {
-    const found = getOrderById(orderId);
-    if (!found) return undefined;
-    if (!contact) return found;
-
-    const cleanContact = contact.trim().toLowerCase();
-    const emailMatch = found.shippingAddress.phone.toLowerCase().includes(cleanContact);
-    const phoneMatch = cleanContact.includes('@') ? false : found.shippingAddress.phone.includes(cleanContact);
-    // If contact is provided, match either phone or generic allow
-    if (emailMatch || phoneMatch || cleanContact.length < 4) {
-      return found;
-    }
-    return found;
+  const trackOrderLookup = (_orderId: string, _contact?: string): CustomerOrder | undefined => {
+    // No client-side mock order lookup or enumeration
+    return undefined;
   };
 
   return (
@@ -264,6 +178,7 @@ export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addOrder,
         getOrderById,
         trackOrderLookup,
+        isBackendConfigured,
       }}
     >
       {children}

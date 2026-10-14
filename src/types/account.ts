@@ -66,9 +66,9 @@ export interface TrackingCheckpoint {
 }
 
 export interface CustomerOrder {
-  id: string; // e.g. "SWN-74192"
-  orderNumber: string; // e.g. "SWN-74192"
-  orderDate: string; // e.g. "12 Oct 2026, 14:32 IST"
+  id: string; // e.g. "ORD-XXXXX"
+  orderNumber: string; // e.g. "ORD-XXXXX"
+  orderDate: string;
   isoDate: string;
   status: 'processing' | 'quality_check' | 'in_transit' | 'delivered' | 'cancelled';
   statusLabel: string;

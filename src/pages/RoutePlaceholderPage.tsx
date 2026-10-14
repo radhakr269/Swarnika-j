@@ -67,7 +67,7 @@ export const RoutePlaceholderPage: React.FC<RoutePlaceholderProps> = ({
     } else if (path.startsWith('/account/orders')) {
       resolvedTitle = orderId ? `Order #${orderId} Details` : 'Acquisition History & Orders';
       resolvedPhase = 'Phase 8: Customer Account & Order Tracking';
-      resolvedDesc = 'Track real-time courier dispatch status, download tax invoices, and manage returns.';
+      resolvedDesc = 'Review verified order history and consignment status once customer accounts and ordering are enabled.';
     } else if (path.startsWith('/account')) {
       resolvedTitle = 'Customer Concierge Account';
       resolvedPhase = 'Phase 8: Customer Account & Profile';

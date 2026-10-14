@@ -99,9 +99,8 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, ord
               Payment & Dispatch Details
             </span>
             <p className="text-[#6D5844]"><strong className="text-[#2D241E]">Payment Mode:</strong> {order.payment.label}</p>
-            <p className="text-[#6D5844]"><strong className="text-[#2D241E]">Status:</strong> {order.payment.status}</p>
-            <p className="text-[#6D5844]"><strong className="text-[#2D241E]">Logistics Partner:</strong> {order.courier.partner}</p>
-            <p className="text-[#6D5844]"><strong className="text-[#2D241E]">Air Waybill (AWB):</strong> {order.courier.awbNumber}</p>
+            <p className="text-[#6D5844]"><strong className="text-[#2D241E]">Logistics:</strong> {order.courier?.partner || 'Insured Delivery'}</p>
+            <p className="text-[#6D5844]"><strong className="text-[#2D241E]">Consignment Ref:</strong> {order.courier?.awbNumber || 'Pending Allocation'}</p>
           </div>
         </div>
 

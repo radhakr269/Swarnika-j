@@ -28,7 +28,7 @@ export const HOMEPAGE_CATEGORIES: HomepageCategoryCard[] = [
     subtitle: 'ELEGANCE EVERYDAY',
     href: ROUTES.WOMEN,
     image: '/assist/image/categories/women.jpg',
-    fallbackImage: '/assist/image/products/P06_Aafreen_Chandbali_Lifestyle_PREVIEW.jpg',
+    fallbackImage: '/assist/image/P06_Aafreen_Chandbali_Lifestyle_PREVIEW.jpg',
   },
   {
     id: 'men',
@@ -36,7 +36,7 @@ export const HOMEPAGE_CATEGORIES: HomepageCategoryCard[] = [
     subtitle: 'MODERN STRENGTH',
     href: ROUTES.MEN,
     image: '/assist/image/categories/men.jpg',
-    fallbackImage: '/assist/image/products/P18_Kuber_Kada_Lifestyle_PREVIEW.jpg',
+    fallbackImage: '/assist/image/P19_Veer_Classic_Chain_Wearing_PREVIEW.jpg',
   },
   {
     id: 'necklaces',
@@ -44,7 +44,7 @@ export const HOMEPAGE_CATEGORIES: HomepageCategoryCard[] = [
     subtitle: 'STATEMENTS THAT LAST',
     href: ROUTES.CATEGORY('necklaces'),
     image: '/assist/image/categories/necklaces.jpg',
-    fallbackImage: '/assist/image/products/P16_Kavya_Polki_Choker_Main_Preview.jpg',
+    fallbackImage: '/assist/image/P17_Rajnandini_Bridal_Set_Closeup_PREVIEW.jpg',
   },
   {
     id: 'earrings',
@@ -52,7 +52,7 @@ export const HOMEPAGE_CATEGORIES: HomepageCategoryCard[] = [
     subtitle: 'DETAILS THAT SHINE',
     href: ROUTES.CATEGORY('earrings'),
     image: '/assist/image/categories/earrings.jpg',
-    fallbackImage: '/assist/image/products/P06_Aafreen_Chandbali_Main_Preview.jpg',
+    fallbackImage: '/assist/image/P06_Aafreen_Chandbali_Main_Preview.jpg',
   },
 ];
 

@@ -1,14 +1,13 @@
 /**
  * SWARNIKA — Customer Address Modal
- * Add & edit shipping/billing addresses with Indian PIN code, state selection, and default flags.
+ * Address specification form reflecting pending backend activation.
+ * Does not fabricate addresses or claim persistent cloud storage without a backend.
  */
 
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Check, ShieldCheck } from 'lucide-react';
+import { X, Lock, ShieldAlert } from 'lucide-react';
 import { CustomerAddress } from '../../types/account';
 import { INDIAN_STATES } from '../../data/mockAccountData';
-import { useAccount } from '../../context/AccountContext';
-import { useShop } from '../../context/ShopContext';
 
 interface AddressModalProps {
   isOpen: boolean;
@@ -21,9 +20,6 @@ export const AddressModal: React.FC<AddressModalProps> = ({
   onClose,
   addressToEdit,
 }) => {
-  const { addAddress, updateAddress } = useAccount();
-  const { addToast } = useShop();
-
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -37,8 +33,6 @@ export const AddressModal: React.FC<AddressModalProps> = ({
     isDefaultShipping: false,
     isDefaultBilling: false,
   });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (addressToEdit) {
@@ -57,56 +51,28 @@ export const AddressModal: React.FC<AddressModalProps> = ({
       });
     } else {
       setFormData({
-        fullName: 'Sophia Sharma',
-        phone: '+91 98765 43210',
+        fullName: '',
+        phone: '',
         addressLine1: '',
         addressLine2: '',
         landmark: '',
-        city: 'Mumbai',
+        city: '',
         state: 'Maharashtra',
-        pincode: '400050',
+        pincode: '',
         tag: 'Home',
         isDefaultShipping: false,
         isDefaultBilling: false,
       });
     }
-    setErrors({});
   }, [addressToEdit, isOpen]);
 
   if (!isOpen) return null;
 
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!formData.fullName.trim()) errs.fullName = 'Recipient name is required';
-    if (!formData.phone.trim() || formData.phone.length < 8) errs.phone = 'Valid contact phone required';
-    if (!formData.addressLine1.trim()) errs.addressLine1 = 'Street address / flat details required';
-    if (!formData.city.trim()) errs.city = 'City required';
-    if (!formData.pincode.trim() || !/^\d{6}$/.test(formData.pincode.replace(/\s+/g, ''))) {
-      errs.pincode = 'Valid 6-digit Indian PIN code required';
-    }
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    if (addressToEdit) {
-      updateAddress(addressToEdit.id, formData);
-      addToast('Address Updated', 'Your delivery address changes have been saved.', 'success');
-    } else {
-      addAddress(formData);
-      addToast('New Address Saved', 'New delivery location added to your patron profile.', 'success');
-    }
-    onClose();
-  };
-
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="address-modal-title">
       <div onClick={onClose} className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" />
 
-      <div className="relative bg-[#FAF8F5] border border-[#E4D5C4] shadow-2xl max-w-lg w-full z-10 p-6 sm:p-8 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div className="relative bg-[#FAF8F5] border border-[#E4D5C4] shadow-2xl max-w-xl w-full z-10 p-6 sm:p-8 space-y-5 animate-in fade-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-[#7A6451] hover:text-[#2D241E] rounded-full hover:bg-[#F2E8DC] cursor-pointer"
@@ -115,193 +81,149 @@ export const AddressModal: React.FC<AddressModalProps> = ({
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[#4A1622] font-semibold">
-          <MapPin className="w-3.5 h-3.5" />
-          <span>Atelier Insured Delivery Address</span>
+        <div>
+          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.24em] text-[#A77B3D] font-semibold mb-1">
+            <Lock className="w-3.5 h-3.5" />
+            <span>Patron Address Stewardship</span>
+          </div>
+          <h2 id="address-modal-title" className="font-serif-luxury text-2xl sm:text-3xl text-[#2D241E]">
+            {addressToEdit ? 'Edit Delivery Location' : 'Add New Delivery Address'}
+          </h2>
+          <p className="text-xs text-[#7A6451] mt-1">
+            Manage physical delivery addresses for insured jewellery consignments.
+          </p>
         </div>
 
-        <h2 className="font-serif-luxury text-2xl text-[#2D241E]">
-          {addressToEdit ? 'Edit Saved Address' : 'Add New Delivery Address'}
-        </h2>
+        {/* Backend Activation Pending Notice */}
+        <div className="p-3.5 bg-[#F4EDE4] border border-[#E0D2C2] text-xs text-[#554336] leading-relaxed flex items-start gap-2.5">
+          <ShieldAlert className="w-4 h-4 text-[#8C3A49] shrink-0 mt-0.5" />
+          <div>
+            <span className="font-semibold text-[#4A1622] uppercase tracking-wider text-[10px] block mb-0.5">
+              Address Storage Requires Verified Patron Account
+            </span>
+            <p className="text-[11.5px] text-[#5A4637]">
+              Persistent address management and verified tax invoice billing require an authenticated customer account. Live address storage will be enabled with backend patron account provisioning.
+            </p>
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 text-xs text-[#2D241E]">
-          {/* Full Name & Phone */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Address Form Fields */}
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-3.5 text-xs text-[#2D241E]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-                Recipient Full Name *
+                Recipient Full Name
               </label>
               <input
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
-                placeholder="e.g. Sophia Sharma"
+                placeholder="Enter full name"
+                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs text-[#2D241E] focus:outline-hidden focus:border-[#4A1622]"
               />
-              {errors.fullName && <p className="text-[10px] text-red-600 mt-0.5">{errors.fullName}</p>}
             </div>
 
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-                Contact Phone *
+                Contact Phone
               </label>
               <input
-                type="text"
+                type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
                 placeholder="+91 98765 43210"
+                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs text-[#2D241E] focus:outline-hidden focus:border-[#4A1622]"
               />
-              {errors.phone && <p className="text-[10px] text-red-600 mt-0.5">{errors.phone}</p>}
             </div>
           </div>
 
-          {/* Address Line 1 */}
           <div>
             <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-              Flat, House No., Building, Company, Apartment *
+              Flat / House No. & Building Name
             </label>
             <input
               type="text"
               value={formData.addressLine1}
               onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
-              className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
               placeholder="e.g. Flat 402, Royal Palms Residency"
+              className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs text-[#2D241E] focus:outline-hidden focus:border-[#4A1622]"
             />
-            {errors.addressLine1 && <p className="text-[10px] text-red-600 mt-0.5">{errors.addressLine1}</p>}
           </div>
 
-          {/* Address Line 2 */}
           <div>
             <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-              Area, Street, Sector, Village
+              Street, Area & Locality
             </label>
             <input
               type="text"
               value={formData.addressLine2}
               onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
-              className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
-              placeholder="e.g. Pali Hill, Bandra West"
+              placeholder="e.g. Pali Hill, Near Nargis Dutt Road"
+              className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs text-[#2D241E] focus:outline-hidden focus:border-[#4A1622]"
             />
           </div>
 
-          {/* Landmark & PIN code */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-                Landmark (Optional)
+                City
               </label>
               <input
                 type="text"
-                value={formData.landmark}
-                onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
-                placeholder="e.g. Near Union Park"
+                value={formData.city}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                placeholder="City"
+                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs text-[#2D241E] focus:outline-hidden focus:border-[#4A1622]"
               />
             </div>
 
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-                PIN Code *
+                State
+              </label>
+              <select
+                value={formData.state}
+                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs text-[#2D241E] focus:outline-hidden focus:border-[#4A1622]"
+              >
+                {INDIAN_STATES.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
+                PIN Code
               </label>
               <input
                 type="text"
                 maxLength={6}
                 value={formData.pincode}
                 onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
-                placeholder="e.g. 400050"
+                placeholder="6-digit PIN"
+                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs text-[#2D241E] focus:outline-hidden focus:border-[#4A1622]"
               />
-              {errors.pincode && <p className="text-[10px] text-red-600 mt-0.5">{errors.pincode}</p>}
             </div>
           </div>
 
-          {/* City & State */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-                City / District *
-              </label>
-              <input
-                type="text"
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
-                placeholder="e.g. Mumbai"
-              />
-              {errors.city && <p className="text-[10px] text-red-600 mt-0.5">{errors.city}</p>}
-            </div>
-
-            <div>
-              <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1">
-                State *
-              </label>
-              <select
-                value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                className="w-full bg-white border border-[#D5C6B5] px-3 py-2 text-xs focus:outline-hidden focus:border-[#4A1622]"
-              >
-                {INDIAN_STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Tag Selector */}
-          <div>
-            <label className="block text-[10px] uppercase tracking-wider font-semibold text-[#554336] mb-1.5">
-              Address Category
-            </label>
-            <div className="flex gap-2">
-              {(['Home', 'Office', 'Atelier / Studio', 'Other'] as const).map((t) => (
-                <button
-                  type="button"
-                  key={t}
-                  onClick={() => setFormData({ ...formData, tag: t })}
-                  className={`px-3 py-1.5 text-[11px] font-medium border cursor-pointer transition-colors ${
-                    formData.tag === t
-                      ? 'bg-[#4A1622] text-white border-[#4A1622]'
-                      : 'bg-white text-[#554336] border-[#D5C6B5] hover:border-[#4A1622]'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Checkboxes */}
-          <div className="pt-2 border-t border-[#E8DED1] space-y-2">
-            <label className="flex items-center gap-2 cursor-pointer text-[11px] text-[#4A3B32]">
-              <input
-                type="checkbox"
-                checked={formData.isDefaultShipping}
-                onChange={(e) => setFormData({ ...formData, isDefaultShipping: e.target.checked })}
-                className="rounded-none text-[#4A1622] focus:ring-[#4A1622]"
-              />
-              <span>Set as default shipping address for all future acquisitions</span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer text-[11px] text-[#4A3B32]">
-              <input
-                type="checkbox"
-                checked={formData.isDefaultBilling}
-                onChange={(e) => setFormData({ ...formData, isDefaultBilling: e.target.checked })}
-                className="rounded-none text-[#4A1622] focus:ring-[#4A1622]"
-              />
-              <span>Set as default tax invoice billing address</span>
-            </label>
-          </div>
-
-          <div className="pt-3">
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <button
-              type="submit"
-              className="w-full bg-[#4A1622] hover:bg-[#350F18] text-white py-3 text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer shadow-xs"
+              type="button"
+              disabled={true}
+              className="flex-1 bg-[#E5D7C7] text-[#7A6451] py-3 text-xs uppercase tracking-[0.18em] font-medium cursor-not-allowed flex items-center justify-center gap-2 border border-[#D5C2AD]"
             >
-              {addressToEdit ? 'SAVE ADDRESS CHANGES' : 'CONFIRM & SAVE ADDRESS'}
+              <Lock className="w-3.5 h-3.5" />
+              <span>Save Unavailable (Pending Backend)</span>
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-3 bg-white border border-[#D5C6B5] hover:bg-[#F2E8DC] text-[#2D241E] text-xs uppercase tracking-[0.18em] font-medium transition-colors cursor-pointer"
+            >
+              Close
             </button>
           </div>
         </form>

@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ShieldAlert, Lock, ArrowLeft, ShoppingBag, ExternalLink, Package } from 'lucide-react';
+import { X, ShieldAlert, Lock, ArrowLeft, ShoppingBag, ExternalLink, Package, Sparkles } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { ROUTES } from '../config/navigation';
 import { SafeImage } from './SafeImage';
@@ -37,9 +37,9 @@ export const CheckoutModal: React.FC = () => {
     setIsCartOpen(true);
   };
 
-  const handleExploreSampleOrders = () => {
+  const handleContinueShopping = () => {
     setIsCheckoutOpen(false);
-    navigate(ROUTES.ORDERS);
+    navigate(ROUTES.SHOP);
   };
 
   return (
@@ -154,11 +154,11 @@ export const CheckoutModal: React.FC = () => {
           </button>
 
           <button
-            onClick={handleExploreSampleOrders}
+            onClick={handleContinueShopping}
             className="flex-1 bg-white border border-[#D5C6B5] hover:bg-[#F2E8DC] text-[#2D241E] py-3 px-4 text-xs uppercase tracking-[0.16em] font-medium transition-colors cursor-pointer flex items-center justify-center gap-2"
           >
-            <Package className="w-4 h-4 text-[#A77B3D]" />
-            <span>View Sample Consignments</span>
+            <Sparkles className="w-4 h-4 text-[#A77B3D]" />
+            <span>Continue Shopping</span>
           </button>
         </div>
       </div>

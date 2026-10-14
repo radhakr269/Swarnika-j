@@ -215,7 +215,7 @@ export const Footer: React.FC = () => {
               {activePolicyModal === 'privacy' ? (
                 <>
                   <p>
-                    SWARNIKA respects patron confidentiality. In this client-side preview environment, all personal preferences, saved addresses, and simulated acquisitions reside locally within your browser sandbox.
+                    SWARNIKA respects patron confidentiality. Customer bag heirlooms and wishlist selections are preserved respectfully. In compliance with strict consumer privacy standards, live patron authentication and order processing require verified server-side security activation.
                   </p>
                   <p>
                     We do not sell personal browsing behavior or transmit payment credentials to unauthorized third parties. Production commerce features utilize industry-standard 256-bit encryption.
