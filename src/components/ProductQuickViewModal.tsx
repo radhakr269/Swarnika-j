@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Star, Heart, Check, ShieldCheck, Truck, ShoppingBag, User, Sparkles, ZoomIn } from 'lucide-react';
+import { X, Star, Heart, Check, ShieldCheck, Truck, ShoppingBag, User, Sparkles, ZoomIn, Award } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { SafeImage } from './SafeImage';
 
@@ -38,21 +38,18 @@ export const ProductQuickViewModal: React.FC = () => {
     ? Math.round(((quickViewProduct.originalPrice - quickViewProduct.price) / quickViewProduct.originalPrice) * 100)
     : null;
 
-  // Active view image and filename
+  // Active view image
   let activeImage = quickViewProduct.image;
   let activeFallback = quickViewProduct.fallbackImage;
-  let activeFilename = quickViewProduct.pictureName;
   let activeLabel = 'Product Still-Life';
 
   if (activeTab === 'model') {
     activeImage = quickViewProduct.modelImage;
     activeFallback = quickViewProduct.fallbackModelImage;
-    activeFilename = quickViewProduct.modelPictureName;
     activeLabel = 'Worn on Model';
   } else if (activeTab === 'closeup' && quickViewProduct.closeupImage) {
     activeImage = quickViewProduct.closeupImage;
     activeFallback = quickViewProduct.fallbackImage;
-    activeFilename = quickViewProduct.closeupPictureName || quickViewProduct.pictureName;
     activeLabel = 'Macro Closeup';
   }
 
@@ -81,24 +78,24 @@ export const ProductQuickViewModal: React.FC = () => {
             <div className="flex items-center justify-between px-3 py-2 bg-[#EFE4D6] border-b border-[#E1D1BF] text-[10px] uppercase tracking-wider font-semibold">
               <span className="text-[#6D5846] flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-[#4A1622]" />
-                Dual Gallery
+                Atelier Gallery
               </span>
               <div className="flex items-center gap-1">
                 <button
                   type="button"
                   onClick={() => setActiveTab('product')}
-                  className={`px-2 py-0.5 rounded-none text-[9.5px] transition-all ${
+                  className={`px-2 py-0.5 rounded-none text-[9.5px] transition-all cursor-pointer ${
                     activeTab === 'product'
                       ? 'bg-[#4A1622] text-white shadow-xs'
                       : 'bg-white/70 text-[#4A3D31] hover:bg-white'
                   }`}
                 >
-                  Product
+                  Still-Life
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('model')}
-                  className={`px-2 py-0.5 rounded-none text-[9.5px] transition-all flex items-center gap-0.5 ${
+                  className={`px-2 py-0.5 rounded-none text-[9.5px] transition-all flex items-center gap-0.5 cursor-pointer ${
                     activeTab === 'model'
                       ? 'bg-[#4A1622] text-white shadow-xs'
                       : 'bg-white/70 text-[#4A3D31] hover:bg-white'
@@ -111,13 +108,13 @@ export const ProductQuickViewModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveTab('closeup')}
-                    className={`px-2 py-0.5 rounded-none text-[9.5px] transition-all ${
+                    className={`px-2 py-0.5 rounded-none text-[9.5px] transition-all cursor-pointer ${
                       activeTab === 'closeup'
                         ? 'bg-[#4A1622] text-white shadow-xs'
                         : 'bg-white/70 text-[#4A3D31] hover:bg-white'
                     }`}
                   >
-                    Closeup
+                    Macro Detail
                   </button>
                 )}
               </div>
@@ -159,16 +156,6 @@ export const ProductQuickViewModal: React.FC = () => {
               </span>
             </div>
 
-            {/* Active Picture Reference Banner */}
-            <div className="px-3 py-1.5 bg-[#E8DDD0] border-t border-[#DFD1C1] text-[9px] text-[#554335] flex items-center justify-between font-mono">
-              <span className="truncate" title={activeFilename}>
-                📁 {activeFilename}
-              </span>
-              <span className="text-[8px] font-sans font-semibold uppercase text-[#8B7563]">
-                {quickViewProduct.id}
-              </span>
-            </div>
-
             {/* Thumbnail Strip: Both Product & Model side-by-side */}
             <div className="p-2 sm:p-2.5 bg-[#FAF6F0] border-t border-[#E8DDD0] flex items-center gap-2">
               <button
@@ -185,7 +172,7 @@ export const ProductQuickViewModal: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
                 <span className="absolute bottom-0 inset-x-0 bg-black/65 text-white text-[6.5px] uppercase text-center py-0.5 font-medium">
-                  Product
+                  Still-Life
                 </span>
               </button>
 
@@ -222,7 +209,7 @@ export const ProductQuickViewModal: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                   <span className="absolute bottom-0 inset-x-0 bg-black/65 text-white text-[6.5px] uppercase text-center py-0.5 font-medium">
-                    Closeup
+                    Macro
                   </span>
                 </button>
               )}
@@ -253,7 +240,7 @@ export const ProductQuickViewModal: React.FC = () => {
                   ))}
                 </div>
                 <span className="text-[11px] text-[#7A6451]">
-                  5.0 ({quickViewProduct.reviewsCount || 124} verified reviews)
+                  5.0 ({quickViewProduct.reviewsCount || 124} verified acquisitions)
                 </span>
               </div>
 
@@ -273,18 +260,15 @@ export const ProductQuickViewModal: React.FC = () => {
                 {quickViewProduct.description}
               </p>
 
-              {/* Reference Filenames Info Box */}
-              <div className="mt-3.5 p-2.5 bg-[#F4EDE3] border border-[#E3D4C4] space-y-1">
-                <span className="text-[9px] uppercase tracking-wider font-bold text-[#4A1622] block">
-                  Asset References for this Card:
-                </span>
-                <div className="text-[8.5px] font-mono text-[#584535] space-y-0.5">
-                  <div className="truncate">💎 <strong>Product:</strong> {quickViewProduct.pictureName}</div>
-                  <div className="truncate">👤 <strong>Model:</strong> {quickViewProduct.modelPictureName}</div>
-                  {quickViewProduct.closeupPictureName && (
-                    <div className="truncate">🔍 <strong>Closeup:</strong> {quickViewProduct.closeupPictureName}</div>
-                  )}
+              {/* Hallmark & Authenticity Info Box */}
+              <div className="mt-3.5 p-3 bg-[#F4EDE3] border border-[#E3D4C4] space-y-1">
+                <div className="flex items-center gap-1.5 text-[9.5px] uppercase tracking-wider font-bold text-[#4A1622]">
+                  <Award className="w-3.5 h-3.5" />
+                  <span>Artisan Purity & Hallmark Guarantee</span>
                 </div>
+                <p className="text-[10px] text-[#695442] leading-relaxed">
+                  Crafted with hypoallergenic brass base, multi-layer 18K gold electroplating, and micro-sealed anti-tarnish protective coating.
+                </p>
               </div>
 
               {/* Metal Selection */}
@@ -343,7 +327,7 @@ export const ProductQuickViewModal: React.FC = () => {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="w-full bg-[#4A1622] hover:bg-[#350F18] text-white py-2.5 sm:py-3 text-xs uppercase tracking-[0.18em] font-medium rounded-none shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full bg-[#4A1622] hover:bg-[#381019] text-white py-2.5 sm:py-3 text-xs uppercase tracking-[0.18em] font-medium rounded-none shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 {added ? (
                   <>

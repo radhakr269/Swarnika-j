@@ -31,7 +31,7 @@ export const WishlistDrawer: React.FC = () => {
           <div className="p-4 sm:p-6 border-b border-[#EDE2D4] flex items-center justify-between">
             <div>
               <h2 className="font-serif-luxury text-lg sm:text-xl font-medium text-[#2D241E]">
-                Saved Favorites ({wishlist.length})
+                Saved Favorites ({wishlistProducts.length})
               </h2>
               <p className="text-[10px] sm:text-[11px] text-[#8C7662]">
                 Your personal curated heirloom wishlist

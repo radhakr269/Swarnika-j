@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, ArrowRight, Star, ShoppingBag, Eye, Check, User, Sparkles } from 'lucide-react';
+import { Heart, ArrowRight, Star, ShoppingBag, Eye, Check, User, Sparkles, RefreshCw } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { ALL_PRODUCTS, Product } from '../data/jewelryData';
 import { SafeImage } from './SafeImage';
@@ -35,7 +35,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   const displayedImage = isShowingModel ? prod.modelImage : prod.image;
   const displayedFallback = isShowingModel ? prod.fallbackModelImage : prod.fallbackImage;
-  const displayedFilename = isShowingModel ? prod.modelPictureName : prod.pictureName;
 
   return (
     <div
@@ -101,24 +100,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <button
               type="button"
               onClick={() => setActiveView('product')}
-              className={`px-2 py-0.5 text-[8px] xs:text-[8.5px] uppercase tracking-wider font-medium transition-all ${
+              className={`px-2 py-0.5 text-[8px] xs:text-[8.5px] uppercase tracking-wider font-medium transition-all cursor-pointer ${
                 !isShowingModel
                   ? 'bg-white text-[#201815] font-bold shadow-xs'
                   : 'text-white/80 hover:text-white'
               }`}
-              title={`View Product: ${prod.pictureName}`}
             >
               Product
             </button>
             <button
               type="button"
               onClick={() => setActiveView('model')}
-              className={`px-2 py-0.5 text-[8px] xs:text-[8.5px] uppercase tracking-wider font-medium transition-all flex items-center gap-0.5 ${
+              className={`px-2 py-0.5 text-[8px] xs:text-[8.5px] uppercase tracking-wider font-medium transition-all flex items-center gap-0.5 cursor-pointer ${
                 isShowingModel
                   ? 'bg-[#4A1622] text-white font-bold shadow-xs'
                   : 'text-white/80 hover:text-white'
               }`}
-              title={`View on Model: ${prod.modelPictureName}`}
             >
               <User className="w-2.5 h-2.5 inline-block" />
               <span>On Model</span>
@@ -129,7 +126,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <button
             type="button"
             onClick={() => onQuickView(prod)}
-            className="hidden sm:inline-flex bg-white/90 hover:bg-white text-[#201815] px-2 py-0.5 text-[8px] uppercase tracking-wider font-semibold items-center gap-1 shadow-xs transition-colors"
+            className="hidden sm:inline-flex bg-white/90 hover:bg-white text-[#201815] px-2 py-0.5 text-[8px] uppercase tracking-wider font-semibold items-center gap-1 shadow-xs transition-colors cursor-pointer"
           >
             <Eye className="w-2.5 h-2.5" />
             <span>Details</span>
@@ -137,16 +134,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      {/* Picture Name Reference Banner */}
-      <div className="bg-[#F2ECE3] px-2 py-1 border-t border-b border-[#E7DDCE] flex items-center justify-between text-[8px] xs:text-[8.5px] text-[#695646]">
+      {/* Luxury Metal & Craft Subtitle */}
+      <div className="bg-[#F4ECE2] px-2.5 py-1 border-t border-b border-[#E7DDCE] flex items-center justify-between text-[8px] xs:text-[8.5px] text-[#695646]">
         <div className="flex items-center gap-1 truncate max-w-[85%]">
-          {isShowingModel ? (
-            <User className="w-2.5 h-2.5 text-[#4A1622] shrink-0" />
-          ) : (
-            <Sparkles className="w-2.5 h-2.5 text-[#9A7B56] shrink-0" />
-          )}
-          <span className="font-mono text-[8px] truncate" title={displayedFilename}>
-            {displayedFilename}
+          <Sparkles className="w-2.5 h-2.5 text-[#9A7B56] shrink-0" />
+          <span className="uppercase tracking-wider font-medium truncate">
+            {prod.metals[0] || '18K Gold Plated'} • Hallmarked
           </span>
         </div>
         <span className="text-[7.5px] font-semibold uppercase tracking-wider text-[#917B68] shrink-0">
@@ -157,9 +150,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Details Section */}
       <div className="p-2 xs:p-2.5 sm:p-3 flex-1 flex flex-col justify-between space-y-1.5">
         <div>
-          {/* Metal subtext & rating */}
           <div className="flex items-center justify-between text-[9px] text-[#8C7662]">
-            <span className="truncate">{prod.metals[0] || '18K Gold Plated'}</span>
+            <span className="capitalize">{prod.category}</span>
             <div className="flex items-center gap-0.5 text-[#C99834] shrink-0">
               <Star className="w-2.5 h-2.5 fill-[#C99834]" />
               <span className="text-[8.5px] font-semibold text-[#5A4535]">5.0</span>
@@ -200,12 +192,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {isJustAdded ? (
             <>
               <Check className="w-3 h-3" />
-              <span>Added</span>
+              <span>Added to Bag</span>
             </>
           ) : (
             <>
               <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>Add to Cart</span>
+              <span>Add to Bag</span>
             </>
           )}
         </button>
@@ -279,7 +271,7 @@ export const SwarnikaBestsellers: React.FC = () => {
             </h2>
             <span className="w-6 sm:w-10 h-[1px] bg-[#221B17]" />
             <span className="text-[10px] sm:text-xs text-[#827163] font-light">
-              ({displayProducts.length} curated designs • Product & Model Dual View)
+              ({displayProducts.length} curated designs • Still-Life & On-Model Dual View)
             </span>
           </div>
 
@@ -326,20 +318,37 @@ export const SwarnikaBestsellers: React.FC = () => {
           })}
         </div>
 
-        {/* Product Cards Grid: 2 columns on mobile, 3 on tablet, 4 on desktop, 5 on xl (Exact match to Swarnika Edge design) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 xs:gap-3 sm:gap-4">
-          {displayProducts.map((prod) => (
-            <ProductCard
-              key={prod.id}
-              prod={prod}
-              onAddToCart={handleAddToCart}
-              isJustAdded={addedId === prod.id}
-              isInWish={isInWishlist(prod.id)}
-              onToggleWish={handleToggleWish}
-              onQuickView={setQuickViewProduct}
-            />
-          ))}
-        </div>
+        {/* Product Cards Grid */}
+        {displayProducts.length === 0 ? (
+          <div className="p-12 text-center bg-white border border-[#EDE2D4] my-6 space-y-3">
+            <Sparkles className="w-8 h-8 text-[#9A7B56] mx-auto" />
+            <h3 className="font-serif-luxury text-xl text-[#201815]">No jewellery pieces found</h3>
+            <p className="text-xs text-[#7A6451] max-w-sm mx-auto">
+              We currently don't have pieces matching this filter criteria. Explore all our signature collections.
+            </p>
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A1622] text-white text-xs uppercase tracking-wider font-medium hover:bg-[#381019] transition-colors cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Reset Filters</span>
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 xs:gap-3 sm:gap-4">
+            {displayProducts.map((prod) => (
+              <ProductCard
+                key={prod.id}
+                prod={prod}
+                onAddToCart={handleAddToCart}
+                isJustAdded={addedId === prod.id}
+                isInWish={isInWishlist(prod.id)}
+                onToggleWish={handleToggleWish}
+                onQuickView={setQuickViewProduct}
+              />
+            ))}
+          </div>
+        )}
 
       </div>
     </section>

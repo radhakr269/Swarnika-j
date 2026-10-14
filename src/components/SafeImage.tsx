@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles } from 'lucide-react';
 
 interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -7,6 +7,18 @@ interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string;
   className?: string;
 }
+
+/**
+ * Normalizes image paths so they work reliably across both Vite dev server
+ * and production builds (where public/ directory files are served from the root).
+ */
+const normalizeUrl = (url?: string): string | undefined => {
+  if (!url) return undefined;
+  if (url.startsWith('/public/')) {
+    return url.replace('/public/', '/');
+  }
+  return url;
+};
 
 export const SafeImage: React.FC<SafeImageProps> = ({
   src,
@@ -17,21 +29,22 @@ export const SafeImage: React.FC<SafeImageProps> = ({
   className = '',
   ...props
 }) => {
-  const [currentSrc, setCurrentSrc] = useState<string | undefined>(src);
+  const normalizedPrimary = normalizeUrl(src);
+  const normalizedFallback = normalizeUrl(fallbackSrc);
+
+  const [currentSrc, setCurrentSrc] = useState<string | undefined>(normalizedPrimary);
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // When src changes, update currentSrc and reset state
-  React.useEffect(() => {
-    setCurrentSrc(src);
+  useEffect(() => {
+    setCurrentSrc(normalizeUrl(src));
     setHasError(false);
     setIsLoaded(false);
   }, [src]);
 
   const handleError = () => {
-    if (fallbackSrc && currentSrc !== fallbackSrc) {
-      // Try fallback URL if the primary src failed
-      setCurrentSrc(fallbackSrc);
+    if (normalizedFallback && currentSrc !== normalizedFallback) {
+      setCurrentSrc(normalizedFallback);
       setIsLoaded(false);
     } else {
       setHasError(true);
@@ -45,7 +58,7 @@ export const SafeImage: React.FC<SafeImageProps> = ({
         role="img"
         aria-label={alt}
       >
-        <div className="w-10 h-10 rounded-full border border-[#D5C2AB] flex items-center justify-center bg-white/50 mb-1.5 shadow-xs">
+        <div className="w-10 h-10 rounded-full border border-[#D5C2AB] flex items-center justify-center bg-white/60 mb-1.5 shadow-xs">
           <Sparkles className="w-5 h-5 text-[#9A7B56]" />
         </div>
         <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-[#8F7453] text-center">
@@ -70,6 +83,7 @@ export const SafeImage: React.FC<SafeImageProps> = ({
         alt={alt}
         referrerPolicy="no-referrer"
         loading="lazy"
+        decoding="async"
         onLoad={() => setIsLoaded(true)}
         onError={handleError}
         className={`w-full h-full object-cover transition-opacity duration-300 ${

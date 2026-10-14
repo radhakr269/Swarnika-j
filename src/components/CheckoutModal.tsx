@@ -1,12 +1,34 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, ShieldCheck, Lock, Truck, ArrowRight, CreditCard, Smartphone, Banknote } from 'lucide-react';
+import { X, CheckCircle, ShieldCheck, Lock, Truck, ArrowRight, CreditCard, Smartphone, Banknote, Tag } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 
 export const CheckoutModal: React.FC = () => {
-  const { isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal, clearCart, addToast } = useShop();
+  const {
+    isCheckoutOpen,
+    setIsCheckoutOpen,
+    cart,
+    cartTotal,
+    shippingFee,
+    finalTotal,
+    appliedPromo,
+    cartItemCount,
+    clearCart,
+    addToast,
+  } = useShop();
 
   const [step, setStep] = useState<'shipping' | 'payment' | 'confirmed'>('shipping');
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
+  
+  // Save confirmed order snapshot before clearCart() wipes the state
+  const [confirmedOrder, setConfirmedOrder] = useState<{
+    orderNumber: string;
+    total: number;
+    itemsCount: number;
+    shipping: number;
+    promoCode?: string;
+    promoDiscount?: number;
+  } | null>(null);
+
   const [formData, setFormData] = useState({
     fullName: 'Sophia Sharma',
     email: 'sophia.sharma@example.com',
@@ -23,18 +45,26 @@ export const CheckoutModal: React.FC = () => {
 
   if (!isCheckoutOpen) return null;
 
-  const orderNumber = 'SWN-89214';
-
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
     if (step === 'shipping') {
       setStep('payment');
     } else if (step === 'payment') {
+      const generatedOrderNum = `SWN-${Math.floor(10000 + Math.random() * 90000)}`;
+      setConfirmedOrder({
+        orderNumber: generatedOrderNum,
+        total: finalTotal,
+        itemsCount: cartItemCount,
+        shipping: shippingFee,
+        promoCode: appliedPromo?.code,
+        promoDiscount: appliedPromo?.amount,
+      });
+
       setStep('confirmed');
       clearCart();
       addToast({
         title: 'Acquisition Confirmed',
-        message: `Order #${orderNumber} placed successfully with complimentary insured delivery.`,
+        message: `Order #${generatedOrderNum} placed successfully with complimentary insured delivery.`,
         type: 'success',
       });
     }
@@ -43,6 +73,7 @@ export const CheckoutModal: React.FC = () => {
   const handleClose = () => {
     setIsCheckoutOpen(false);
     setStep('shipping');
+    setConfirmedOrder(null);
   };
 
   return (
@@ -53,6 +84,7 @@ export const CheckoutModal: React.FC = () => {
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 p-2 text-[#7A6451] hover:text-[#2D241E] rounded-full hover:bg-[#F2E8DC] cursor-pointer"
+          aria-label="Close checkout"
         >
           <X className="w-5 h-5" />
         </button>
@@ -284,19 +316,44 @@ export const CheckoutModal: React.FC = () => {
               )}
 
               {/* Order Summary line */}
-              <div className="pt-2 border-t border-[#EDE2D4] flex items-center justify-between text-xs">
-                <span className="text-[#6D5844]">Total Payable:</span>
-                <span className="font-serif-luxury text-base font-semibold text-[#4A1622]">
-                  ₹{cartTotal.toLocaleString()}
-                </span>
+              <div className="pt-2 border-t border-[#EDE2D4] space-y-1 text-xs">
+                <div className="flex justify-between text-[#6D5844]">
+                  <span>Items Subtotal:</span>
+                  <span className="tabular-nums">₹{cartTotal.toLocaleString()}</span>
+                </div>
+                {appliedPromo && (
+                  <div className="flex justify-between text-[#2E6B3E]">
+                    <span className="flex items-center gap-1">
+                      <Tag className="w-3 h-3" />
+                      Promo ({appliedPromo.code}):
+                    </span>
+                    <span className="tabular-nums">-₹{appliedPromo.amount.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-[#6D5844]">
+                  <span>Insured Delivery:</span>
+                  <span className="text-[#2E6B3E] font-medium">
+                    {shippingFee === 0 ? 'FREE' : `₹${shippingFee}`}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-1 border-t border-[#E8DDCE] text-sm">
+                  <span className="font-semibold text-[#2D241E]">Total Payable:</span>
+                  <span className="font-serif-luxury text-base font-semibold text-[#4A1622] tabular-nums">
+                    ₹{finalTotal.toLocaleString()}
+                  </span>
+                </div>
               </div>
 
               {/* Action Button */}
               <button
                 type="submit"
-                className="w-full bg-[#4A1622] hover:bg-[#350F18] text-white py-3 text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full bg-[#4A1622] hover:bg-[#381019] text-white py-3 text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>{step === 'shipping' ? 'CONTINUE TO PAYMENT' : `AUTHORIZE PAYMENT • ₹${cartTotal.toLocaleString()}`}</span>
+                <span>
+                  {step === 'shipping'
+                    ? 'CONTINUE TO PAYMENT'
+                    : `AUTHORIZE PAYMENT • ₹${finalTotal.toLocaleString()}`}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
@@ -314,7 +371,7 @@ export const CheckoutModal: React.FC = () => {
                 Thank You, {formData.fullName}!
               </h2>
               <p className="text-xs text-[#6D5844] mt-1 max-w-sm mx-auto leading-relaxed">
-                Your order <strong className="text-[#2D241E]">#{orderNumber}</strong> has been registered at our atelier. A tracking link will be sent to <strong>{formData.email}</strong>.
+                Your order <strong className="text-[#2D241E]">#{confirmedOrder?.orderNumber}</strong> has been registered at our atelier. A tracking link has been dispatched to <strong>{formData.email}</strong>.
               </p>
             </div>
 
@@ -324,8 +381,16 @@ export const CheckoutModal: React.FC = () => {
                 <span className="font-semibold text-[#2E6B3E]">Atelier Crafting</span>
               </div>
               <div className="flex justify-between text-[#7A6451]">
-                <span>Delivery To:</span>
-                <span className="font-semibold text-[#2D241E] truncate max-w-[180px]">{formData.city}, {formData.pincode}</span>
+                <span>Total Amount:</span>
+                <span className="font-semibold text-[#2D241E] tabular-nums">
+                  ₹{confirmedOrder?.total.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-[#7A6451]">
+                <span>Delivery Address:</span>
+                <span className="font-semibold text-[#2D241E] truncate max-w-[180px]">
+                  {formData.city}, {formData.pincode}
+                </span>
               </div>
               <div className="flex justify-between text-[#7A6451]">
                 <span>Estimated Arrival:</span>
@@ -335,7 +400,7 @@ export const CheckoutModal: React.FC = () => {
 
             <button
               onClick={handleClose}
-              className="bg-[#4A1622] hover:bg-[#350F18] text-white py-3 px-8 text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer"
+              className="bg-[#4A1622] hover:bg-[#381019] text-white py-3 px-8 text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer"
             >
               Continue Exploring
             </button>

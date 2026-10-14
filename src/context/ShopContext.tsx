@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, ALL_PRODUCTS } from '../data/jewelryData';
 
 export interface CartItem {
+  id: string; // unique item variant key
   product: Product;
   quantity: number;
   selectedMetal: string;
@@ -14,6 +15,12 @@ export interface ToastItem {
   title: string;
   message: string;
   type?: 'info' | 'success';
+}
+
+interface PromoDiscount {
+  code: string;
+  percent: number;
+  amount: number;
 }
 
 interface ShopContextType {
@@ -41,14 +48,19 @@ interface ShopContextType {
     metalOrOpts?: string | { material?: string; color?: string; length?: string },
     size?: string
   ) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeFromCart: (itemIdOrProductId: string, metal?: string, size?: string) => void;
+  updateQuantity: (itemIdOrProductId: string, quantity: number, metal?: string, size?: string) => void;
   clearCart: () => void;
   toggleWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
   cartTotal: number;
   cartCount: number;
   cartItemCount: number;
+  shippingFee: number;
+  finalTotal: number;
+  appliedPromo: PromoDiscount | null;
+  applyPromoCode: (code: string) => boolean;
+  removePromoCode: () => void;
   toasts: ToastItem[];
   addToast: (titleOrToast: string | Omit<ToastItem, 'id'>, message?: string, type?: 'info' | 'success') => void;
   removeToast: (id: string) => void;
@@ -57,55 +69,27 @@ interface ShopContextType {
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
+const FREE_SHIPPING_THRESHOLD = 2999;
+const STANDARD_SHIPPING_FEE = 199;
+
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([
     {
-      product: ALL_PRODUCTS[0] || {
-        id: 'P06',
-        name: 'Aafreen Royal Chandbali Earrings',
-        pictureName: 'P06_Aafreen_Chandbali_Product.jpg',
-        modelPictureName: 'P06_Aafreen_Chandbali_Model.jpg',
-        price: 4499,
-        originalPrice: 5999,
-        image: '/public/assist/image/products/P06_Aafreen_Chandbali_Product.jpg',
-        modelImage: '/public/assist/image/models/P06_Aafreen_Chandbali_Model.jpg',
-        fallbackImage: '/public/assist/image/P06_Aafreen_Chandbali_Main_Preview.jpg',
-        fallbackModelImage: '/public/assist/image/P06_Aafreen_Chandbali_Lifestyle_PREVIEW.jpg',
-        category: 'earrings',
-        metals: ['18K Gold Plated', 'Antique Gold Polish'],
-        description: 'Opulent crescent moon chandbali earrings handcrafted with uncut polki stones.',
-        reviewsCount: 168,
-        rating: 5,
-        inStock: true,
-      },
+      id: 'P06-18K Gold Plated',
+      product: ALL_PRODUCTS[0],
       quantity: 1,
       selectedMetal: '18K Gold Plated',
     },
     {
-      product: ALL_PRODUCTS[1] || {
-        id: 'P07',
-        name: 'Noor Heritage Dome Jhumkas',
-        pictureName: 'P07_Noor_Jhumka_Product.jpg',
-        modelPictureName: 'P07_Noor_Jhumka_Model.jpg',
-        price: 3899,
-        originalPrice: 5200,
-        image: '/public/assist/image/products/P07_Noor_Jhumka_Product.jpg',
-        modelImage: '/public/assist/image/models/P07_Noor_Jhumka_Model.jpg',
-        fallbackImage: '/public/assist/image/P07_Noor_Jhumka_Main_Preview.jpg',
-        fallbackModelImage: '/public/assist/image/P07_Noor_Jhumka_Lifestyle_PREVIEW.jpg',
-        category: 'earrings',
-        metals: ['18K Gold Plated', 'Heritage Kundan'],
-        description: 'Royal dome-shaped filigree jhumkas suspended with cascading micro-pearl ghungroos.',
-        reviewsCount: 142,
-        rating: 5,
-        inStock: true,
-      },
+      id: 'P07-18K Gold Plated',
+      product: ALL_PRODUCTS[1],
       quantity: 1,
       selectedMetal: '18K Gold Plated',
     },
   ]);
 
-  const [wishlist, setWishlist] = useState<string[]>(['sw-1', 'sw-3']);
+  // Initialized with genuine product IDs present in ALL_PRODUCTS
+  const [wishlist, setWishlist] = useState<string[]>(['P08', 'P14']);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -114,14 +98,53 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<string>('swarnika');
+  const [appliedPromo, setAppliedPromo] = useState<PromoDiscount | null>(null);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  // Lock background scroll when any full-screen modal or drawer is open
+  useEffect(() => {
+    const hasOpenModal =
+      isCartOpen || isWishlistOpen || isSearchOpen || isCheckoutOpen || isStoryOpen || !!quickViewProduct;
+
+    if (hasOpenModal) {
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [isCartOpen, isWishlistOpen, isSearchOpen, isCheckoutOpen, isStoryOpen, quickViewProduct]);
+
+  // Global escape key listener to close active overlays
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (quickViewProduct) setQuickViewProduct(null);
+        else if (isSearchOpen) setIsSearchOpen(false);
+        else if (isCheckoutOpen) setIsCheckoutOpen(false);
+        else if (isCartOpen) setIsCartOpen(false);
+        else if (isWishlistOpen) setIsWishlistOpen(false);
+        else if (isStoryOpen) setIsStoryOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [quickViewProduct, isSearchOpen, isCheckoutOpen, isCartOpen, isWishlistOpen, isStoryOpen]);
 
   const addToast = (
     titleOrToast: string | Omit<ToastItem, 'id'>,
     message = '',
     type: 'info' | 'success' = 'success'
   ) => {
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 4);
+    const id = Date.now().toString() + Math.random().toString(36).substring(2, 6);
     let newToast: ToastItem;
 
     if (typeof titleOrToast === 'string') {
@@ -164,10 +187,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ? metalOrOpts
         : metalOrOpts?.material || product.metals?.[0] || '18K Gold Plated';
 
+    const itemKey = `${product.id}-${metal}${size ? `-${size}` : ''}`;
+
     setCart((prev) => {
-      const existingIndex = prev.findIndex(
-        (item) => item.product.id === product.id && item.selectedMetal === metal && item.selectedSize === size
-      );
+      const existingIndex = prev.findIndex((item) => item.id === itemKey);
 
       if (existingIndex > -1) {
         const next = [...prev];
@@ -181,6 +204,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return [
         ...prev,
         {
+          id: itemKey,
           product,
           quantity,
           selectedMetal: metal,
@@ -189,26 +213,41 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ];
     });
 
-    addToast('Added to Cart', `${product.name} has been added to your shopping bag.`);
+    addToast('Added to Bag', `${product.name} (${metal}) has been added to your shopping bag.`);
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.product.id !== productId));
-    addToast('Removed from Cart', 'Item removed from your bag.', 'info');
+  const removeFromCart = (itemIdOrProductId: string, metal?: string, size?: string) => {
+    setCart((prev) =>
+      prev.filter((item) => {
+        if (metal !== undefined) {
+          return !(item.product.id === itemIdOrProductId && item.selectedMetal === metal && item.selectedSize === size);
+        }
+        return item.id !== itemIdOrProductId && item.product.id !== itemIdOrProductId;
+      })
+    );
+    addToast('Removed from Bag', 'Item removed from your bag.', 'info');
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (itemIdOrProductId: string, quantity: number, metal?: string, size?: string) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(itemIdOrProductId, metal, size);
       return;
     }
     setCart((prev) =>
-      prev.map((item) => (item.product.id === productId ? { ...item, quantity } : item))
+      prev.map((item) => {
+        const matches =
+          item.id === itemIdOrProductId ||
+          (metal !== undefined
+            ? item.product.id === itemIdOrProductId && item.selectedMetal === metal && item.selectedSize === size
+            : item.product.id === itemIdOrProductId);
+        return matches ? { ...item, quantity } : item;
+      })
     );
   };
 
   const clearCart = () => {
     setCart([]);
+    setAppliedPromo(null);
   };
 
   const toggleWishlist = (productId: string) => {
@@ -228,6 +267,32 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const cartTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartCount = cartItemCount;
+
+  // Re-calculate promo discount whenever cartTotal changes
+  const discountAmount = appliedPromo ? Math.round((cartTotal * appliedPromo.percent) / 100) : 0;
+  const shippingFee = cartTotal >= FREE_SHIPPING_THRESHOLD || cartTotal === 0 ? 0 : STANDARD_SHIPPING_FEE;
+  const finalTotal = Math.max(0, cartTotal - discountAmount) + shippingFee;
+
+  const applyPromoCode = (code: string): boolean => {
+    const cleanCode = code.trim().toUpperCase();
+    if (cleanCode === 'SWARNIKA15' || cleanCode === 'WELCOME15') {
+      const discount = Math.round((cartTotal * 15) / 100);
+      setAppliedPromo({
+        code: cleanCode,
+        percent: 15,
+        amount: discount,
+      });
+      addToast('Privilege Applied', '15% VIP privilege discount has been applied to your acquisition.');
+      return true;
+    }
+    addToast('Invalid Code', 'Try SWARNIKA15 for 15% VIP privilege.', 'info');
+    return false;
+  };
+
+  const removePromoCode = () => {
+    setAppliedPromo(null);
+    addToast('Promo Removed', 'Discount privilege removed from bag.', 'info');
+  };
 
   return (
     <ShopContext.Provider
@@ -259,6 +324,11 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         cartTotal,
         cartCount,
         cartItemCount,
+        shippingFee,
+        finalTotal,
+        appliedPromo,
+        applyPromoCode,
+        removePromoCode,
         toasts,
         addToast,
         removeToast,

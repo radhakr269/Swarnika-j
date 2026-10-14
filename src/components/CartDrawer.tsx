@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, RotateCcw, Gift, Check } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, RotateCcw, Gift, Tag } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { SafeImage } from './SafeImage';
 
@@ -10,16 +10,18 @@ export const CartDrawer: React.FC = () => {
     updateQuantity,
     cartTotal,
     cartItemCount,
+    shippingFee,
+    finalTotal,
+    appliedPromo,
+    applyPromoCode,
+    removePromoCode,
     isCartOpen,
     setIsCartOpen,
     setIsCheckoutOpen,
     addToCart,
-    addToast,
   } = useShop();
 
   const [promoInput, setPromoInput] = useState('');
-  const [promoApplied, setPromoApplied] = useState(false);
-  const [discountAmount, setDiscountAmount] = useState(0);
 
   if (!isCartOpen) return null;
 
@@ -29,25 +31,12 @@ export const CartDrawer: React.FC = () => {
 
   const handleApplyPromo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (promoInput.trim().toUpperCase() === 'SWARNIKA15' || promoInput.trim().toUpperCase() === 'WELCOME15') {
-      setPromoApplied(true);
-      const discount = Math.round(cartTotal * 0.15);
-      setDiscountAmount(discount);
-      addToast({
-        title: 'Privilege Applied',
-        message: '15% VIP discount has been applied to your acquisition.',
-        type: 'success',
-      });
-    } else {
-      addToast({
-        title: 'Invalid Code',
-        message: 'Please try SWARNIKA15 for 15% VIP privilege.',
-        type: 'info',
-      });
+    if (!promoInput.trim()) return;
+    const ok = applyPromoCode(promoInput);
+    if (ok) {
+      setPromoInput('');
     }
   };
-
-  const finalSubtotal = Math.max(0, cartTotal - discountAmount);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -67,7 +56,7 @@ export const CartDrawer: React.FC = () => {
                 Shopping Bag ({cartItemCount})
               </h2>
               <p className="text-[10px] sm:text-[11px] text-[#8C7662]">
-                Complimentary tamper-evident insured delivery
+                Complimentary insured delivery with tamper-evident seal
               </p>
             </div>
             <button
@@ -128,7 +117,7 @@ export const CartDrawer: React.FC = () => {
               <>
                 {cart.map((item) => (
                   <div
-                    key={`${item.product.id}-${item.selectedMetal}`}
+                    key={item.id}
                     className="flex gap-3 sm:gap-4 p-3 bg-white border border-[#EDE2D4] rounded-none shadow-xs"
                   >
                     {/* Item Image */}
@@ -154,7 +143,7 @@ export const CartDrawer: React.FC = () => {
                           </p>
                         </div>
                         <button
-                          onClick={() => removeFromCart(item.product.id)}
+                          onClick={() => removeFromCart(item.id)}
                           className="text-[#AFA193] hover:text-[#B43838] transition-colors p-1 cursor-pointer"
                           aria-label="Remove item"
                         >
@@ -166,7 +155,7 @@ export const CartDrawer: React.FC = () => {
                         {/* Quantity Stepper */}
                         <div className="flex items-center border border-[#DCCEC0] bg-[#FAF8F5]">
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             className="p-1 px-2 text-[#6D5844] hover:bg-[#EDE1D3] transition-colors cursor-pointer"
                             aria-label="Decrease quantity"
                           >
@@ -176,7 +165,7 @@ export const CartDrawer: React.FC = () => {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             className="p-1 px-2 text-[#6D5844] hover:bg-[#EDE1D3] transition-colors cursor-pointer"
                             aria-label="Increase quantity"
                           >
@@ -198,7 +187,7 @@ export const CartDrawer: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-none overflow-hidden bg-white border border-[#D5C2AF] shrink-0">
                       <SafeImage
-                        src="/public/assist/image/products/03_Cart_Gift_Packaging.jpg"
+                        src="/assist/image/products/03_Cart_Gift_Packaging.jpg"
                         alt="Royal Velvet Presentation Box"
                         fallbackCategory="Gift Box"
                         className="w-full h-full object-cover"
@@ -206,10 +195,10 @@ export const CartDrawer: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-serif-luxury text-xs font-semibold text-[#2D241E]">
-                        Royal Velvet Gift Box
+                        Royal Velvet Keepsake Box
                       </p>
                       <p className="text-[10px] text-[#7A6451]">
-                        Add signature keepsake case for ₹499
+                        Add presentation box for ₹499
                       </p>
                     </div>
                   </div>
@@ -218,18 +207,18 @@ export const CartDrawer: React.FC = () => {
                       addToCart(
                         {
                           id: 'royal-velvet-box',
-                          name: 'Royal Velvet Gift Box',
+                          name: 'Royal Velvet Keepsake Box',
                           pictureName: '03_Cart_Gift_Packaging.jpg',
                           modelPictureName: '03_Cart_Gift_Packaging.jpg',
                           category: 'all',
                           price: 499,
                           rating: 5,
                           reviewsCount: 88,
-                          image: '/public/assist/image/products/03_Cart_Gift_Packaging.jpg',
-                          modelImage: '/public/assist/image/products/03_Cart_Gift_Packaging.jpg',
-                          fallbackImage: '/public/assist/image/03_Cart_Gift_Packaging.jpg',
-                          fallbackModelImage: '/public/assist/image/03_Cart_Gift_Packaging.jpg',
-                          description: 'Plush crimson velvet keepsake jewelry box with gold trim.',
+                          image: '/assist/image/products/03_Cart_Gift_Packaging.jpg',
+                          modelImage: '/assist/image/products/03_Cart_Gift_Packaging.jpg',
+                          fallbackImage: '/assist/image/03_Cart_Gift_Packaging.jpg',
+                          fallbackModelImage: '/assist/image/03_Cart_Gift_Packaging.jpg',
+                          description: 'Plush crimson velvet keepsake jewelry box with 18K gold trim.',
                           metals: ['Royal Velvet'],
                           inStock: true,
                         },
@@ -250,21 +239,36 @@ export const CartDrawer: React.FC = () => {
           {cart.length > 0 && (
             <div className="p-4 sm:p-6 bg-white border-t border-[#EAE0D3] space-y-3 sm:space-y-4">
               {/* Promo code form */}
-              <form onSubmit={handleApplyPromo} className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="PROMO CODE (SWARNIKA15)"
-                  value={promoInput}
-                  onChange={(e) => setPromoInput(e.target.value)}
-                  className="flex-1 bg-[#FAF8F5] border border-[#D5C2AF] px-3 py-2 text-[11px] uppercase tracking-wider text-[#2D241E] focus:outline-none focus:border-[#4A1622] rounded-none"
-                />
-                <button
-                  type="submit"
-                  className="px-3.5 py-2 bg-[#FAF8F5] hover:bg-[#F2E8DC] text-[#4A1622] border border-[#D5C2AF] text-[10px] uppercase tracking-wider font-semibold rounded-none transition-colors cursor-pointer"
-                >
-                  Apply
-                </button>
-              </form>
+              {appliedPromo ? (
+                <div className="flex items-center justify-between p-2.5 bg-[#F4EDE4] border border-[#D5C2AD] text-xs">
+                  <div className="flex items-center gap-1.5 text-[#2E6B3E] font-medium">
+                    <Tag className="w-3.5 h-3.5" />
+                    <span>Coupon <strong>{appliedPromo.code}</strong> applied ({appliedPromo.percent}% OFF)</span>
+                  </div>
+                  <button
+                    onClick={removePromoCode}
+                    className="text-[#987853] hover:text-[#B43838] text-[10px] uppercase font-semibold tracking-wider cursor-pointer"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleApplyPromo} className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="PROMO CODE (SWARNIKA15)"
+                    value={promoInput}
+                    onChange={(e) => setPromoInput(e.target.value)}
+                    className="flex-1 bg-[#FAF8F5] border border-[#D5C2AD] px-3 py-2 text-[11px] uppercase tracking-wider text-[#2D241E] focus:outline-none focus:border-[#4A1622] rounded-none"
+                  />
+                  <button
+                    type="submit"
+                    className="px-3.5 py-2 bg-[#FAF8F5] hover:bg-[#F2E8DC] text-[#4A1622] border border-[#D5C2AD] text-[10px] uppercase tracking-wider font-semibold rounded-none transition-colors cursor-pointer"
+                  >
+                    Apply
+                  </button>
+                </form>
+              )}
 
               {/* Subtotal lines */}
               <div className="space-y-1 text-xs text-[#6C5643]">
@@ -274,22 +278,22 @@ export const CartDrawer: React.FC = () => {
                     ₹{cartTotal.toLocaleString()}
                   </span>
                 </div>
-                {promoApplied && (
+                {appliedPromo && (
                   <div className="flex justify-between text-[#2E6B3E]">
-                    <span>VIP 15% Privilege Discount</span>
-                    <span className="tabular-nums">-₹{discountAmount.toLocaleString()}</span>
+                    <span>VIP Privilege ({appliedPromo.percent}%)</span>
+                    <span className="tabular-nums">-₹{appliedPromo.amount.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span>Insured Shipping</span>
                   <span className="text-[#2E6B3E] font-medium">
-                    {amountNeeded === 0 ? 'FREE' : '₹199'}
+                    {shippingFee === 0 ? 'FREE' : `₹${shippingFee}`}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm sm:text-base font-semibold text-[#2D241E] pt-2 border-t border-[#EDE2D4]">
-                  <span>Total</span>
+                  <span>Total Payable</span>
                   <span className="tabular-nums font-serif-luxury text-base sm:text-lg text-[#4A1622]">
-                    ₹{(finalSubtotal + (amountNeeded === 0 ? 0 : 199)).toLocaleString()}
+                    ₹{finalTotal.toLocaleString()}
                   </span>
                 </div>
               </div>

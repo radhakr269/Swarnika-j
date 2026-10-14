@@ -7,7 +7,7 @@ export const Footer: React.FC = () => {
 
   const handleCategoryClick = (cat: string) => {
     setSelectedCategory(cat);
-    const target = document.getElementById('best-sellers');
+    const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   };
 
