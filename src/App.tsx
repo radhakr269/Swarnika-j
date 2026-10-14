@@ -12,6 +12,8 @@ import { ShopCataloguePage } from './pages/ShopCataloguePage';
 import { WomenLandingPage } from './pages/WomenLandingPage';
 import { MenLandingPage } from './pages/MenLandingPage';
 import { CollectionsLandingPage } from './pages/CollectionsLandingPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+import { WishlistPage } from './pages/WishlistPage';
 import { RoutePlaceholderPage } from './pages/RoutePlaceholderPage';
 
 export default function App() {
@@ -31,10 +33,10 @@ export default function App() {
             {/* Catalogue & Category Architecture (Phase 4: Shop All, Category) */}
             <Route path="shop" element={<ShopCataloguePage mode="shop" />} />
             <Route path="category/:slug" element={<ShopCataloguePage mode="category" />} />
-            <Route path="product/:slug" element={<RoutePlaceholderPage />} />
+            <Route path="product/:slug" element={<ProductDetailPage />} />
 
-            {/* Shopping & Acquisition Architecture (Phases 7-8) */}
-            <Route path="wishlist" element={<RoutePlaceholderPage />} />
+            {/* Shopping & Acquisition Architecture (Phase 6: Wishlist) */}
+            <Route path="wishlist" element={<WishlistPage />} />
             <Route path="cart" element={<RoutePlaceholderPage />} />
             <Route path="checkout" element={<RoutePlaceholderPage />} />
 

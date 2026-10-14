@@ -3,6 +3,7 @@ import { X, Trash2, ShoppingBag, Heart } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { ALL_PRODUCTS } from '../data/jewelryData';
 import { SafeImage } from './SafeImage';
+import { ROUTES } from '../config/navigation';
 
 export const WishlistDrawer: React.FC = () => {
   const {
@@ -109,6 +110,22 @@ export const WishlistDrawer: React.FC = () => {
               ))
             )}
           </div>
+
+          {wishlistProducts.length > 0 && (
+            <div className="p-4 sm:p-6 border-t border-[#EDE2D4] bg-[#FAF8F5]">
+              <a
+                href={ROUTES.WISHLIST}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsWishlistOpen(false);
+                  window.location.href = ROUTES.WISHLIST;
+                }}
+                className="w-full py-2.5 bg-[#4A101C] hover:bg-[#350B14] text-white text-xs uppercase tracking-[0.18em] font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+              >
+                <span>View Full Wishlist Page ({wishlistProducts.length})</span>
+              </a>
+            </div>
+          )}
 
         </div>
       </div>

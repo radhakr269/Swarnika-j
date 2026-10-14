@@ -71,25 +71,60 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
 const FREE_SHIPPING_THRESHOLD = 2999;
 const STANDARD_SHIPPING_FEE = 199;
+const CART_STORAGE_KEY = 'swarnika_cart_v1';
+const WISHLIST_STORAGE_KEY = 'swarnika_wishlist_v1';
 
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<CartItem[]>([
-    {
-      id: 'P06-18K Gold Plated',
-      product: ALL_PRODUCTS[0],
-      quantity: 1,
-      selectedMetal: '18K Gold Plated',
-    },
-    {
-      id: 'P07-18K Gold Plated',
-      product: ALL_PRODUCTS[1],
-      quantity: 1,
-      selectedMetal: '18K Gold Plated',
-    },
-  ]);
+  // Initialize cart from localStorage, starting empty for new visitors
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      const loadedItems: CartItem[] = [];
+      for (const item of parsed) {
+        if (!item || typeof item !== 'object') continue;
+        const prodId = item.productId || (item.product && item.product.id);
+        const product = ALL_PRODUCTS.find((p) => p.id === prodId);
+        if (!product) continue;
+        const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+        const selectedMetal = typeof item.selectedMetal === 'string' ? item.selectedMetal : product.metals[0] || '18K Gold Plated';
+        const selectedSize = typeof item.selectedSize === 'string' ? item.selectedSize : undefined;
+        const itemKey = item.id || `${product.id}-${selectedMetal}${selectedSize ? `-${selectedSize}` : ''}`;
+        loadedItems.push({
+          id: itemKey,
+          product,
+          quantity,
+          selectedMetal,
+          selectedSize,
+          selectedMaterial: item.selectedMaterial,
+        });
+      }
+      return loadedItems;
+    } catch (e) {
+      console.warn('Unable to load saved cart state', e);
+      return [];
+    }
+  });
 
-  // Initialized with genuine product IDs present in ALL_PRODUCTS
-  const [wishlist, setWishlist] = useState<string[]>(['P08', 'P14']);
+  // Initialize wishlist from localStorage, starting empty for new visitors
+  const [wishlist, setWishlist] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const saved = localStorage.getItem(WISHLIST_STORAGE_KEY);
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      const validIds = new Set(ALL_PRODUCTS.map((p) => p.id));
+      return Array.from(new Set(parsed.filter((id) => typeof id === 'string' && validIds.has(id))));
+    } catch (e) {
+      console.warn('Unable to load saved wishlist state', e);
+      return [];
+    }
+  });
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -100,6 +135,31 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [viewMode, setViewMode] = useState<string>('swarnika');
   const [appliedPromo, setAppliedPromo] = useState<PromoDiscount | null>(null);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  // Persist cart changes
+  useEffect(() => {
+    try {
+      const payload = cart.map((item) => ({
+        id: item.id,
+        productId: item.product.id,
+        quantity: item.quantity,
+        selectedMetal: item.selectedMetal,
+        selectedSize: item.selectedSize,
+      }));
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      // Ignore quota errors
+    }
+  }, [cart]);
+
+  // Persist wishlist changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
+    } catch (e) {
+      // Ignore quota errors
+    }
+  }, [wishlist]);
 
   // Lock background scroll when any full-screen modal or drawer is open
   useEffect(() => {

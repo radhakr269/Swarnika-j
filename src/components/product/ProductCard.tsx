@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Eye, Check } from 'lucide-react';
 import { Product } from '../../data/jewelryData';
 import { SafeImage } from '../SafeImage';
+import { getProductUrl } from '../../lib/productRoutes';
 
 export interface ProductCardProps {
   product: Product;
@@ -25,20 +27,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   isJustAdded = false,
   variant = 'standard',
   showBadges = true,
-  showDualViewToggle = false, // Task 3: default false to avoid overloaded marketplace appearance
+  showDualViewToggle = false,
   className = '',
 }) => {
-  // State for optional explicit toggle if enabled in future
   const [activeView, setActiveView] = useState<'product' | 'model'>('product');
   const [isHovered, setIsHovered] = useState(false);
 
-  // Desktop hover reveals model preview if in product view
   const isShowingModel = (isHovered && activeView === 'product') || activeView === 'model';
-
   const displayedImage = isShowingModel ? product.modelImage : product.image;
   const displayedFallback = isShowingModel ? product.fallbackModelImage : product.fallbackImage;
-
   const isOutOfStock = product.inStock === false;
+  const productUrl = getProductUrl(product);
 
   return (
     <div
@@ -46,17 +45,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       onMouseLeave={() => setIsHovered(false)}
       className={`group bg-white border border-[#E8DFD3] rounded-none overflow-hidden flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-300 relative ${className}`}
     >
-      {/* 
-        Photo Container:
-        - Clean, bright luxury product photograph
-        - No heavy dark gradient overlay
-        - Subtle hover preview of model on desktop
-        - Minimalist wishlist heart
-        - Minimal badge (Bestseller, New, Trending)
-      */}
-      <div
-        onClick={() => onQuickView?.(product)}
-        className="relative aspect-square w-full bg-[#F5ECE1] overflow-hidden cursor-pointer select-none"
+      {/* Photo Container linking to Product Details */}
+      <Link
+        to={productUrl}
+        className="block relative aspect-square w-full bg-[#F5ECE1] overflow-hidden select-none cursor-pointer"
+        aria-label={`View details for ${product.name}`}
       >
         <SafeImage
           src={displayedImage}
@@ -81,6 +74,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <button
             type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onToggleWishlist(product.id, e);
             }}
@@ -95,62 +89,35 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         )}
 
-        {/* Optional Segmented Switcher (Disabled by default, preserved for future usage if required) */}
-        {showDualViewToggle && (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-2 inset-x-2 z-20 flex items-center justify-between"
+        {/* Quick View Button on Hover */}
+        {onQuickView && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onQuickView(product);
+            }}
+            className="absolute bottom-2 right-2 z-20 bg-white/95 hover:bg-white text-[#201815] hover:text-[#4A101C] px-2 py-1 text-[9px] uppercase tracking-wider font-semibold flex items-center gap-1 shadow-xs border border-[#D5C8B8] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer focus:opacity-100"
+            aria-label={`Quick view ${product.name}`}
           >
-            <div className="inline-flex bg-black/70 backdrop-blur-xs p-0.5 border border-white/20">
-              <button
-                type="button"
-                onClick={() => setActiveView('product')}
-                className={`px-2 py-0.5 text-[8px] uppercase tracking-wider font-medium cursor-pointer ${
-                  activeView === 'product' ? 'bg-white text-[#201815] font-bold' : 'text-white/80'
-                }`}
-              >
-                Product
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveView('model')}
-                className={`px-2 py-0.5 text-[8px] uppercase tracking-wider font-medium cursor-pointer ${
-                  activeView === 'model' ? 'bg-[#4A101C] text-white font-bold' : 'text-white/80'
-                }`}
-              >
-                Model
-              </button>
-            </div>
-
-            {onQuickView && (
-              <button
-                type="button"
-                onClick={() => onQuickView(product)}
-                className="bg-white/90 text-[#201815] px-2 py-0.5 text-[8px] uppercase tracking-wider font-semibold flex items-center gap-1 shadow-xs cursor-pointer"
-              >
-                <Eye className="w-2.5 h-2.5" />
-                <span>Details</span>
-              </button>
-            )}
-          </div>
+            <Eye className="w-3 h-3" />
+            <span>Quick View</span>
+          </button>
         )}
-      </div>
+      </Link>
 
-      {/* 
-        Clean Luxury Details Section:
-        - Pure product title & INR price
-        - Removed SKU strip, unverified Hallmarked claim, and unverified ratings
-      */}
+      {/* Clean Luxury Details Section */}
       <div className="p-3 sm:p-3.5 flex-1 flex flex-col justify-between space-y-2.5 bg-white">
         <div>
-          {/* Product Title */}
-          <h3
-            onClick={() => onQuickView?.(product)}
-            className="text-xs sm:text-[13px] font-medium text-[#201815] hover:text-[#4A101C] cursor-pointer transition-colors leading-snug line-clamp-1"
+          {/* Product Title linking to Product Details */}
+          <Link
+            to={productUrl}
+            className="text-xs sm:text-[13px] font-medium text-[#201815] hover:text-[#4A101C] transition-colors leading-snug line-clamp-1 block"
             title={product.name}
           >
             {product.name}
-          </h3>
+          </Link>
 
           {/* Pricing in INR */}
           <div className="flex items-baseline gap-2 mt-1">
