@@ -4,14 +4,8 @@ import {
   ChevronRight,
   Sparkles,
   ArrowRight,
-  ShieldCheck,
-  Award,
   Truck,
   RotateCcw,
-  SlidersHorizontal,
-  Heart,
-  Eye,
-  ShoppingBag,
   Gem,
   Crown,
 } from 'lucide-react';
@@ -29,7 +23,7 @@ export const WomenLandingPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<WomenSortOption>('featured');
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
-  // All Women's products in catalogue (13 items)
+  // All Women's products in catalogue (13 items dynamically calculated)
   const womenProducts = useMemo(() => {
     return ALL_PRODUCTS.filter((p) => p.gender === 'women');
   }, []);
@@ -108,7 +102,7 @@ export const WomenLandingPage: React.FC = () => {
               <Sparkles className="w-3.5 h-3.5 text-[#A77B3D]" />
               <span>THE WOMEN'S EDIT</span>
               <span className="w-8 h-[1px] bg-[#BFAFA0]" aria-hidden="true" />
-              <span>JAIPUR ATELIER</span>
+              <span>REFINED JEWELLERY SELECTION</span>
             </div>
 
             <h1 className="font-serif-luxury text-3xl sm:text-4xl lg:text-5xl text-[#4A101C] font-normal leading-[1.12] text-balance">
@@ -116,8 +110,8 @@ export const WomenLandingPage: React.FC = () => {
             </h1>
 
             <p className="text-[#5E4A3B] text-sm sm:text-base font-light leading-relaxed max-w-xl">
-              From imperial uncut polki chandbalis to gossamer halo solitaires, explore our master-curated
-              heirlooms designed for sacred occasions, evening celebrations, and daily understated luxury.
+              From imperial uncut polki chandbalis to gossamer halo solitaires, explore thoughtfully designed
+              pieces created for memorable ceremonies, evening celebrations, and everyday style.
             </p>
 
             {/* Editorial Quick Jump Links */}
@@ -171,7 +165,7 @@ export const WomenLandingPage: React.FC = () => {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          3. ATELIER HIGHLIGHT: ROYAL JAIPUR CRAFTSMANSHIP
+          3. ATELIER HIGHLIGHT: HERITAGE CRAFTSMANSHIP
           ───────────────────────────────────────────────────────────── */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12">
         <div className="bg-[#FAF7F2] border border-[#E8DFD3] p-6 sm:p-10 lg:p-12">
@@ -197,39 +191,39 @@ export const WomenLandingPage: React.FC = () => {
               </div>
 
               <h2 className="font-serif-luxury text-2xl sm:text-3xl lg:text-4xl text-[#4A101C] font-normal leading-tight">
-                Jaipur Polki Craftsmanship & Royal 18K Polish
+                Traditional Polki Craftsmanship & Refined Finishes
               </h2>
 
               <p className="text-[#5E4A3B] text-sm sm:text-[15px] font-light leading-relaxed">
-                Each Swarnika creation begins in Rajasthan’s centuries-old jewellery guilds. Our master karigars
-                hand-chisel floral prongs, set shimmering cubic zircons and uncut polki glass stones, and frame
-                them with hand-strung seed pearls. Finished with our proprietary anti-tarnish 18K gold electroplate,
-                they capture the weight and radiance of ancestral heirlooms.
+                Each Swarnika creation is shaped with inspiration from Rajasthan’s historic jewellery traditions.
+                Our artisans set shimmering cubic zircons and uncut polki glass stones into detailed settings,
+                framed with hand-strung seed pearls. Finished with distinctive gold-toned polishes, they capture
+                the visual depth and presence of ancestral heirlooms.
               </p>
 
               <div className="grid grid-cols-3 gap-3 pt-2 text-center">
                 <div className="p-3 bg-white border border-[#E8DFD3]">
-                  <span className="font-serif-luxury text-xl sm:text-2xl text-[#4A101C] block font-normal">
-                    100%
+                  <span className="font-serif-luxury text-base sm:text-lg text-[#4A101C] block font-normal">
+                    Intricate Detailing
                   </span>
                   <span className="text-[10px] sm:text-xs text-[#7A6655] uppercase tracking-wider block mt-0.5">
-                    Lead & Nickel Free
+                    Hand-Set Stones
                   </span>
                 </div>
                 <div className="p-3 bg-white border border-[#E8DFD3]">
-                  <span className="font-serif-luxury text-xl sm:text-2xl text-[#4A101C] block font-normal">
-                    18K
+                  <span className="font-serif-luxury text-base sm:text-lg text-[#4A101C] block font-normal">
+                    Gold-Plated Tone
                   </span>
                   <span className="text-[10px] sm:text-xs text-[#7A6655] uppercase tracking-wider block mt-0.5">
-                    Gold Polish Finish
+                    Lustrous Finish
                   </span>
                 </div>
                 <div className="p-3 bg-white border border-[#E8DFD3]">
-                  <span className="font-serif-luxury text-xl sm:text-2xl text-[#4A101C] block font-normal">
-                    BIS
+                  <span className="font-serif-luxury text-base sm:text-lg text-[#4A101C] block font-normal">
+                    Traditional Motif
                   </span>
                   <span className="text-[10px] sm:text-xs text-[#7A6655] uppercase tracking-wider block mt-0.5">
-                    Assayed & Certified
+                    Jaipur Inspiration
                   </span>
                 </div>
               </div>
@@ -385,7 +379,7 @@ export const WomenLandingPage: React.FC = () => {
             Three Signature Ways to Wear Swarnika
           </h2>
           <p className="text-[#5E4A3B] text-xs sm:text-sm font-light mt-2 leading-relaxed">
-            Thoughtfully paired heirlooms styled for grand ceremonies, everyday modern luxury, and starlit galas.
+            Thoughtfully paired heirlooms styled for memorable ceremonies, everyday refinement, and starlit celebrations.
           </p>
         </div>
 
@@ -394,23 +388,23 @@ export const WomenLandingPage: React.FC = () => {
           <div className="bg-white border border-[#E8DFD3] p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-shadow">
             <div>
               <span className="text-[11px] uppercase tracking-[0.2em] text-[#A77B3D] font-semibold block mb-1">
-                CURATION 01 · VIVAH
+                CURATION 01 · BRIDAL EDIT
               </span>
               <h3 className="font-serif-luxury text-lg text-[#4A101C] font-normal mb-2">
                 The Festive Celebration
               </h3>
               <p className="text-xs text-[#5E4A3B] font-light leading-relaxed mb-4">
                 Pair the opulent Aafreen Crescent Chandbalis with the Kashi Temple floral bangles for timeless
-                traditional gravitas that elevates Kanjeevarams and raw silk lehengas.
+                traditional gravitas that elevates festive attire and special celebrations.
               </p>
             </div>
             <div className="pt-4 border-t border-[#F0E6D8] flex items-center justify-between text-xs">
               <span className="text-[#7A6655] font-medium">₹4,499 + ₹5,499</span>
               <Link
-                to="/collections#bridal"
+                to="/collections?edit=bridal"
                 className="text-[#4A101C] hover:underline font-semibold flex items-center gap-1"
               >
-                <span>View Suite</span>
+                <span>View Bridal Edit</span>
                 <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
@@ -420,23 +414,23 @@ export const WomenLandingPage: React.FC = () => {
           <div className="bg-white border border-[#E8DFD3] p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-shadow">
             <div>
               <span className="text-[11px] uppercase tracking-[0.2em] text-[#A77B3D] font-semibold block mb-1">
-                CURATION 02 · ATELIER DAILY
+                CURATION 02 · MINIMAL STATEMENTS
               </span>
               <h3 className="font-serif-luxury text-lg text-[#4A101C] font-normal mb-2">
                 Everyday Modern Luminance
               </h3>
               <p className="text-xs text-[#5E4A3B] font-light leading-relaxed mb-4">
-                The featherlight Gulnaar Micro-Pavé Hoops worn with the Celeste Halo Solitaire ring. Designed to
-                transition seamlessly from morning board meetings to intimate dinner dates.
+                The lightweight Gulnaar Micro-Pavé Hoops worn alongside the Celeste Halo Solitaire ring. Designed to
+                transition gracefully from workdays to evening outings.
               </p>
             </div>
             <div className="pt-4 border-t border-[#F0E6D8] flex items-center justify-between text-xs">
               <span className="text-[#7A6655] font-medium">₹2,999 + ₹4,199</span>
               <Link
-                to="/collections#everyday"
+                to="/collections?edit=minimal"
                 className="text-[#4A101C] hover:underline font-semibold flex items-center gap-1"
               >
-                <span>View Suite</span>
+                <span>View Minimal Edit</span>
                 <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
@@ -446,23 +440,23 @@ export const WomenLandingPage: React.FC = () => {
           <div className="bg-white border border-[#E8DFD3] p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-shadow">
             <div>
               <span className="text-[11px] uppercase tracking-[0.2em] text-[#A77B3D] font-semibold block mb-1">
-                CURATION 03 · EVENING GALA
+                CURATION 03 · FESTIVE GOLD
               </span>
               <h3 className="font-serif-luxury text-lg text-[#4A101C] font-normal mb-2">
-                The Midnight Soirée
+                Festive Occasion Elegance
               </h3>
               <p className="text-xs text-[#5E4A3B] font-light leading-relaxed mb-4">
-                The Noor Heritage Dome Jhumkas balanced by the architectural brilliance of the Ziva Tennis Bracelet.
-                A study in light reflection, movement, and commanding radiance.
+                The Noor Heritage Dome Jhumkas balanced by the architectural shine of the Ziva Tennis Bracelet.
+                A study in light reflection, movement, and festive radiance.
               </p>
             </div>
             <div className="pt-4 border-t border-[#F0E6D8] flex items-center justify-between text-xs">
               <span className="text-[#7A6655] font-medium">₹3,899 + ₹4,899</span>
               <Link
-                to="/collections"
+                to="/collections?edit=festive"
                 className="text-[#4A101C] hover:underline font-semibold flex items-center gap-1"
               >
-                <span>View Suite</span>
+                <span>View Festive Gold</span>
                 <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
@@ -471,47 +465,47 @@ export const WomenLandingPage: React.FC = () => {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          6. LUXURY TRUST & SERVICE COMMITMENTS
+          6. RESTRAINED TRUST & SERVICE COMMITMENTS
           ───────────────────────────────────────────────────────────── */}
       <section className="bg-white border-t border-[#E8DFD3] py-8 sm:py-12">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="flex flex-col items-center space-y-2">
-            <ShieldCheck className="w-6 h-6 text-[#A77B3D]" />
+            <Crown className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              Hallmark Certified
+              Thoughtful Craftsmanship
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              BIS hallmarked precious metals and guaranteed 18K thick gold electroplating.
+              Handcrafted jewellery featuring intricate stone settings and gold-toned finishes.
             </p>
           </div>
 
           <div className="flex flex-col items-center space-y-2">
             <Truck className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              Insured Transit
+              Complimentary Delivery
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              100% insured delivery in tamper-evident discreet security packaging.
+              Free courier delivery across India on orders exceeding ₹2,999.
             </p>
           </div>
 
           <div className="flex flex-col items-center space-y-2">
             <Gem className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              Velvet Keepsake Box
+              Keepsake Packaging
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              Complimentary signature velvet presentation chest with certificates of authenticity.
+              Signature presentation box designed to store your pieces with care.
             </p>
           </div>
 
           <div className="flex flex-col items-center space-y-2">
             <RotateCcw className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              15-Day Exchange
+              7-Day Return Policy
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              Hassle-free doorstep returns and sizing adjustments across India.
+              Hassle-free return inspection with dedicated doorstep pickup assistance.
             </p>
           </div>
         </div>

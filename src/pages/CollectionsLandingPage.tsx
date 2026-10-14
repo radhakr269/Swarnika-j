@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   ChevronRight,
   Sparkles,
@@ -10,91 +10,53 @@ import {
   Gem,
   Crown,
   Heart,
-  Calendar,
-  Check,
+  Mail,
 } from 'lucide-react';
 import { ALL_PRODUCTS, Product } from '../data/jewelryData';
+import {
+  EDITORIAL_COLLECTIONS,
+  EditorialCollection,
+  VALID_COLLECTION_IDS,
+  CollectionId,
+} from '../data/editorialCollections';
 import { useShop } from '../context/ShopContext';
 import { ProductCard } from '../components/product/ProductCard';
 import { ROUTES } from '../config/navigation';
-
-type CollectionTab = 'all' | 'bridal' | 'everyday' | 'mens' | 'solitaires';
-
-interface CollectionSuite {
-  id: CollectionTab;
-  title: string;
-  eyebrow: string;
-  narrative: string;
-  image: string;
-  productIds: string[];
-  ctaLabel: string;
-  ctaLink: string;
-}
+import { STORE_CONFIG } from '../config/store';
 
 export const CollectionsLandingPage: React.FC = () => {
   const { addToCart, toggleWishlist, isInWishlist, setQuickViewProduct } = useShop();
-  const [activeTab, setActiveTab] = useState<CollectionTab>('all');
-  const [addedProductId, setAddedProductId] = useState<string | null>(null);
-  const [conciergeSubmitted, setConciergeSubmitted] = useState(false);
-  const [conciergeForm, setConciergeForm] = useState({
-    name: '',
-    phone: '',
-    occasion: 'Bridal & Wedding',
-    date: '',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [addedProductId, setAddedProductId] = React.useState<string | null>(null);
 
-  // Four signature curated suites
-  const suites: CollectionSuite[] = [
-    {
-      id: 'bridal',
-      title: 'The Royal Bridal & Festive Suite',
-      eyebrow: 'CHAPTER 01 · VIVAH & HIGH CELEBRATION',
-      narrative:
-        'A regal assembly of uncut polki chandbalis, handcrafted chokers, temple bangles, and sacred mangalsutras created to honor life’s most auspicious ceremonies with imperial grandeur.',
-      image: '/assist/image/banners/promo_bridal.jpg',
-      productIds: ['P17', 'P06', 'P18', 'P07', 'P16'],
-      ctaLabel: 'Shop All Bridal Heirlooms',
-      ctaLink: '/shop?category=necklaces',
-    },
-    {
-      id: 'everyday',
-      title: 'Modern Everyday Luxe Edit',
-      eyebrow: 'CHAPTER 02 · EFFORTLESS DAILY RADIANCE',
-      narrative:
-        'Featherlight micro-pavé hoops, diamond studs, and architectural tennis bracelets designed to layer seamlessly from morning boardroom presentations to candlelit evenings.',
-      image: '/assist/image/banners/promo_everyday.jpg',
-      productIds: ['P10', 'P09', 'P14', 'P12', 'P15'],
-      ctaLabel: 'Shop Everyday Essentials',
-      ctaLink: '/shop?category=earrings',
-    },
-    {
-      id: 'mens',
-      title: 'The Men’s Armoury',
-      eyebrow: 'CHAPTER 03 · INDUSTRIAL PRECISION & POWER',
-      narrative:
-        'Heavy-gauge 7mm Cuban chains, mirror-polished maritime link bracelets, solar crest signet rings, and Grade 5 titanium open cuffs engineered with commanding weight and zero-tarnish durability.',
-      image: '/assist/image/models/P19_Veer_Classic_Chain_Model.jpg',
-      productIds: ['P19', 'P21', 'P22', 'P24', 'P20'],
-      ctaLabel: 'Shop The Complete Men’s Armoury',
-      ctaLink: '/men',
-    },
-    {
-      id: 'solitaires',
-      title: 'Sacred Vows & Eternal Rings',
-      eyebrow: 'CHAPTER 04 · PROMISES SET IN GOLD',
-      narrative:
-        'Brilliant halo solitaires, floral cluster cocktail rings, ergonomic chamfered comfort bands, and modern mangalsutras crafted as permanent physical tokens of unwavering love.',
-      image: '/assist/image/categories/engagement.jpg',
-      productIds: ['P11', 'P25', 'P12', 'P16', 'P13'],
-      ctaLabel: 'Shop Rings & Solitaires',
-      ctaLink: '/category/rings',
-    },
-  ];
+  // Read collection edit filter from URL query param
+  const activeEditParam = searchParams.get('edit')?.toLowerCase() || 'all';
 
-  const filteredSuites = useMemo(() => {
-    if (activeTab === 'all') return suites;
-    return suites.filter((s) => s.id === activeTab);
-  }, [activeTab]);
+  const selectedEdit = useMemo((): CollectionId | 'all' => {
+    if (VALID_COLLECTION_IDS.includes(activeEditParam as CollectionId)) {
+      return activeEditParam as CollectionId;
+    }
+    return 'all';
+  }, [activeEditParam]);
+
+  // Handle tab switching with real URL query synchronization
+  const handleTabSelect = (tab: CollectionId | 'all') => {
+    if (tab === 'all') {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('edit');
+      setSearchParams(nextParams, { replace: false });
+    } else {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set('edit', tab);
+      setSearchParams(nextParams, { replace: false });
+    }
+  };
+
+  // Filtered suites
+  const displayedSuites = useMemo(() => {
+    if (selectedEdit === 'all') return EDITORIAL_COLLECTIONS;
+    return EDITORIAL_COLLECTIONS.filter((s) => s.id === selectedEdit);
+  }, [selectedEdit]);
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -108,12 +70,6 @@ export const CollectionsLandingPage: React.FC = () => {
   const handleToggleWishlist = (productId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     toggleWishlist(productId);
-  };
-
-  const handleConciergeSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!conciergeForm.name || !conciergeForm.phone) return;
-    setConciergeSubmitted(true);
   };
 
   return (
@@ -134,6 +90,16 @@ export const CollectionsLandingPage: React.FC = () => {
           <li className="font-medium text-[#4A101C]" aria-current="page">
             Collections
           </li>
+          {selectedEdit !== 'all' && (
+            <>
+              <li aria-hidden="true">
+                <ChevronRight className="w-3 h-3 text-[#BFAFA0]" />
+              </li>
+              <li className="font-medium text-[#7A6655] capitalize" aria-current="page">
+                {EDITORIAL_COLLECTIONS.find((c) => c.id === selectedEdit)?.title}
+              </li>
+            </>
+          )}
         </ol>
       </nav>
 
@@ -152,67 +118,67 @@ export const CollectionsLandingPage: React.FC = () => {
           </h1>
 
           <p className="text-[#5E4A3B] text-sm sm:text-base font-light leading-relaxed">
-            Each collection explores a distinct thematic chapter in precious metal craft—from high-ceremonial
-            Jaipur bridal sets to contemporary architectural chains and daily solitaires.
+            Each collection explores a distinct thematic chapter in jewellery design—from ceremonial bridal suites
+            and festive gold accents to understated daily statements and timeless gifts.
           </p>
         </div>
 
-        {/* Suite Filter Tabs */}
+        {/* Four Approved Collection Filter Tabs */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-2 p-1.5 bg-white border border-[#E8DFD3] inline-flex shadow-2xs">
           <button
             type="button"
-            onClick={() => setActiveTab('all')}
+            onClick={() => handleTabSelect('all')}
             className={`px-4 py-2 text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === 'all'
+              selectedEdit === 'all'
                 ? 'bg-[#4A101C] text-white shadow-2xs'
                 : 'text-[#5E4A3B] hover:text-[#4A101C]'
             }`}
           >
-            All 4 Suites
+            All Collections
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('bridal')}
+            onClick={() => handleTabSelect('bridal')}
             className={`px-4 py-2 text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === 'bridal'
+              selectedEdit === 'bridal'
                 ? 'bg-[#4A101C] text-white shadow-2xs'
                 : 'text-[#5E4A3B] hover:text-[#4A101C]'
             }`}
           >
-            The Royal Bridal Suite
+            Bridal Edit
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('everyday')}
+            onClick={() => handleTabSelect('festive')}
             className={`px-4 py-2 text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === 'everyday'
+              selectedEdit === 'festive'
                 ? 'bg-[#4A101C] text-white shadow-2xs'
                 : 'text-[#5E4A3B] hover:text-[#4A101C]'
             }`}
           >
-            Modern Everyday Luxe
+            Festive Gold
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('mens')}
+            onClick={() => handleTabSelect('minimal')}
             className={`px-4 py-2 text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === 'mens'
+              selectedEdit === 'minimal'
                 ? 'bg-[#4A101C] text-white shadow-2xs'
                 : 'text-[#5E4A3B] hover:text-[#4A101C]'
             }`}
           >
-            The Men’s Armoury
+            Minimal Statements
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('solitaires')}
+            onClick={() => handleTabSelect('gifting')}
             className={`px-4 py-2 text-xs font-medium transition-colors cursor-pointer ${
-              activeTab === 'solitaires'
+              selectedEdit === 'gifting'
                 ? 'bg-[#4A101C] text-white shadow-2xs'
                 : 'text-[#5E4A3B] hover:text-[#4A101C]'
             }`}
           >
-            Sacred Vows & Rings
+            Gifted Elegance
           </button>
         </div>
       </section>
@@ -221,7 +187,7 @@ export const CollectionsLandingPage: React.FC = () => {
           3. SUITE-BY-SUITE EDITORIAL SHOWCASE
           ───────────────────────────────────────────────────────────── */}
       <div className="space-y-16 sm:space-y-24 py-8">
-        {filteredSuites.map((suite, idx) => {
+        {displayedSuites.map((suite, idx) => {
           // Resolve matching products in exact specified order
           const suiteProducts = suite.productIds
             .map((id) => ALL_PRODUCTS.find((p) => p.id === id))
@@ -253,7 +219,7 @@ export const CollectionsLandingPage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
                     <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 text-white z-10">
                       <span className="text-[10px] uppercase tracking-[0.2em] font-light opacity-90 block">
-                        CURATED ATELIER
+                        CURATED CHAPTER
                       </span>
                       <p className="font-serif-luxury text-xl sm:text-2xl font-normal">
                         {suite.title}
@@ -273,10 +239,10 @@ export const CollectionsLandingPage: React.FC = () => {
                     </h2>
 
                     <p className="text-[#5E4A3B] text-sm sm:text-[15px] font-light leading-relaxed">
-                      {suite.narrative}
+                      {suite.description}
                     </p>
 
-                    <div className="pt-2 flex items-center gap-4">
+                    <div className="pt-2 flex flex-wrap items-center gap-4">
                       <Link
                         to={suite.ctaLink}
                         className="inline-flex items-center gap-2 px-5 py-3 bg-[#4A101C] hover:bg-[#350B14] text-white text-xs uppercase tracking-[0.18em] font-medium transition-colors shadow-xs"
@@ -286,15 +252,15 @@ export const CollectionsLandingPage: React.FC = () => {
                       </Link>
 
                       <span className="text-xs text-[#7A6655]">
-                        {suiteProducts.length} Featured Heirlooms
+                        {suiteProducts.length} Curated Heirlooms
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Suite Product Grid: 4 or 5 responsive columns */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+              {/* Suite Product Grid: Responsive multi-column layout */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
                 {suiteProducts.map((product) => (
                   <ProductCard
                     key={product.id}
@@ -313,189 +279,89 @@ export const CollectionsLandingPage: React.FC = () => {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-          4. BESPOKE BRIDAL & ATELIER CONCIERGE SERVICE
+          4. EDITORIAL CONCIERGE & STYLING ASSISTANCE (NO FAKE FORM)
           ───────────────────────────────────────────────────────────── */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-12 sm:py-16">
         <div className="bg-[#1F1916] text-[#FAF7F2] border border-[#3E322C] p-6 sm:p-10 lg:p-14 shadow-md">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Story text */}
-            <div className="lg:col-span-6 space-y-4">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#C5A059] font-medium">
-                <Gem className="w-3.5 h-3.5 text-[#C5A059]" />
-                <span>PRIVATE CLIENT SERVICES</span>
-              </div>
-
-              <h2 className="font-serif-luxury text-2xl sm:text-3xl lg:text-4xl text-[#FAF7F2] font-normal leading-tight">
-                Bespoke Bridal Trousseau & High-Jewellery Concierge
-              </h2>
-
-              <p className="text-[#C8BDB6] text-sm font-light leading-relaxed">
-                Planning your wedding, an anniversary gift, or an imperial family heirloom? Our Jaipur master
-                stylists provide complimentary 1-on-1 virtual or in-person consultation to coordinate gemstone
-                carats, neck drops, and custom hallmark certifications.
-              </p>
-
-              <div className="pt-2 flex flex-wrap gap-4 text-xs text-[#C8BDB6]">
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#C5A059]" />
-                  <span>Certified BIS Hallmarks</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Crown className="w-4 h-4 text-[#C5A059]" />
-                  <span>Jaipur Master Karigars</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Truck className="w-4 h-4 text-[#C5A059]" />
-                  <span>White-Glove Delivery</span>
-                </div>
-              </div>
+          <div className="max-w-3xl mx-auto text-center space-y-4">
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#C5A059] font-medium">
+              <Gem className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>PERSONAL STYLING ASSISTANCE</span>
             </div>
 
-            {/* Interactive Appointment Form */}
-            <div className="lg:col-span-6 bg-[#2B231F] border border-[#483B34] p-6 sm:p-8">
-              {conciergeSubmitted ? (
-                <div className="text-center py-8 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-[#2E6B3E] text-white flex items-center justify-center mx-auto">
-                    <Check className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-serif-luxury text-xl text-[#FAF7F2]">
-                    Concierge Appointment Reserved
-                  </h3>
-                  <p className="text-xs text-[#C8BDB6] max-w-sm mx-auto leading-relaxed">
-                    Thank you, <span className="font-semibold text-white">{conciergeForm.name}</span>. Our senior
-                    jewellery advisor will contact you at{' '}
-                    <span className="font-semibold text-white">{conciergeForm.phone}</span> within 2 hours.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setConciergeSubmitted(false);
-                      setConciergeForm({ name: '', phone: '', occasion: 'Bridal & Wedding', date: '' });
-                    }}
-                    className="text-xs text-[#C5A059] underline hover:text-white cursor-pointer mt-2"
-                  >
-                    Submit another consultation request
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleConciergeSubmit} className="space-y-4">
-                  <h3 className="font-serif-luxury text-lg text-[#FAF7F2] font-normal">
-                    Reserve Private Consultation
-                  </h3>
+            <h2 className="font-serif-luxury text-2xl sm:text-3xl lg:text-4xl text-[#FAF7F2] font-normal leading-tight">
+              Explore Personal Styling Assistance
+            </h2>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] uppercase tracking-wider text-[#C8BDB6] mb-1">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={conciergeForm.name}
-                        onChange={(e) => setConciergeForm({ ...conciergeForm, name: e.target.value })}
-                        placeholder="e.g. Maharani Gayatri Devi"
-                        className="w-full bg-[#1C1715] border border-[#483B34] text-[#FAF7F2] px-3 py-2 text-xs focus:outline-hidden focus:border-[#C5A059]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] uppercase tracking-wider text-[#C8BDB6] mb-1">
-                        Mobile Number *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={conciergeForm.phone}
-                        onChange={(e) => setConciergeForm({ ...conciergeForm, phone: e.target.value })}
-                        placeholder="+91 98765 43210"
-                        className="w-full bg-[#1C1715] border border-[#483B34] text-[#FAF7F2] px-3 py-2 text-xs focus:outline-hidden focus:border-[#C5A059]"
-                      />
-                    </div>
-                  </div>
+            <p className="text-[#C8BDB6] text-sm sm:text-base font-light leading-relaxed max-w-2xl mx-auto">
+              Whether coordinating a bridal trousseau, selecting an anniversary gift, or discovering versatile
+              everyday combinations, our editorial curations help guide your choice. Browse our comprehensive
+              catalogue or connect directly with our client concierge.
+            </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] uppercase tracking-wider text-[#C8BDB6] mb-1">
-                        Occasion
-                      </label>
-                      <select
-                        value={conciergeForm.occasion}
-                        onChange={(e) => setConciergeForm({ ...conciergeForm, occasion: e.target.value })}
-                        className="w-full bg-[#1C1715] border border-[#483B34] text-[#FAF7F2] px-3 py-2 text-xs focus:outline-hidden focus:border-[#C5A059] cursor-pointer"
-                      >
-                        <option value="Bridal & Wedding">Bridal & Wedding Trousseau</option>
-                        <option value="Anniversary Gift">Anniversary & Milestone Gift</option>
-                        <option value="Men's Bespoke">Men's Bespoke Chains & Cuffs</option>
-                        <option value="Custom Solitaire">Custom Solitaire & Rings</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[11px] uppercase tracking-wider text-[#C8BDB6] mb-1">
-                        Preferred Date
-                      </label>
-                      <input
-                        type="date"
-                        value={conciergeForm.date}
-                        onChange={(e) => setConciergeForm({ ...conciergeForm, date: e.target.value })}
-                        className="w-full bg-[#1C1715] border border-[#483B34] text-[#FAF7F2] px-3 py-2 text-xs focus:outline-hidden focus:border-[#C5A059] cursor-pointer"
-                      />
-                    </div>
-                  </div>
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+              <Link
+                to={ROUTES.SHOP}
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#C5A059] hover:bg-[#B38F48] text-[#1C1715] text-xs uppercase tracking-[0.18em] font-semibold transition-colors"
+              >
+                <span>Browse Full Catalogue</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
 
-                  <button
-                    type="submit"
-                    className="w-full py-3 bg-[#C5A059] hover:bg-[#B38F48] text-[#1C1715] text-xs uppercase tracking-[0.2em] font-semibold transition-colors cursor-pointer"
-                  >
-                    Request Bespoke Appointment
-                  </button>
-                </form>
-              )}
+              <a
+                href={`mailto:${STORE_CONFIG.concierge.email}?subject=Personal%20Jewellery%20Styling%20Inquiry`}
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-transparent border border-[#C5A059] hover:bg-[#C5A059]/10 text-[#C5A059] text-xs uppercase tracking-[0.18em] font-medium transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Contact Client Concierge</span>
+              </a>
             </div>
           </div>
         </div>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          5. LUXURY TRUST COMMITMENTS
+          5. RESTRAINED COMMERCIAL COMMITMENTS
           ───────────────────────────────────────────────────────────── */}
       <section className="bg-white border-t border-[#E8DFD3] py-8 sm:py-12">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="flex flex-col items-center space-y-2">
-            <ShieldCheck className="w-6 h-6 text-[#A77B3D]" />
+            <Crown className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              Hallmark Certified
+              Thoughtful Design
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              Every precious stone and 18K gold layer is independently verified and hallmarked.
+              Artisanal jewellery crafted with premium gold-toned finishes and intricate stone detailing.
             </p>
           </div>
 
           <div className="flex flex-col items-center space-y-2">
             <Truck className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              Discreet Insured Transit
+              Complimentary Delivery
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              Shipped in unmarked, tamper-evident security cartons with GPS tracking.
+              Free courier shipping across India on orders exceeding ₹2,999.
             </p>
           </div>
 
           <div className="flex flex-col items-center space-y-2">
             <Gem className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              Handmade Keepsake Box
+              Keepsake Packaging
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              Handmade velvet chests designed to protect your jewels for generations.
+              Every creation arrives in signature presentation packaging designed to preserve its beauty.
             </p>
           </div>
 
           <div className="flex flex-col items-center space-y-2">
             <RotateCcw className="w-6 h-6 text-[#A77B3D]" />
             <h4 className="text-xs uppercase tracking-wider font-semibold text-[#201815]">
-              Doorstep Exchanges
+              7-Day Return Policy
             </h4>
             <p className="text-[11px] text-[#7A6655] font-light max-w-xs">
-              Effortless exchanges and sizing services across over 19,000 pincodes.
+              Hassle-free return inspection with dedicated doorstep pickup assistance.
             </p>
           </div>
         </div>

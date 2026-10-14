@@ -260,14 +260,14 @@ export const ProductQuickViewModal: React.FC = () => {
                 {quickViewProduct.description}
               </p>
 
-              {/* Hallmark & Authenticity Info Box */}
+              {/* Product Finish & Detailing Info Box */}
               <div className="mt-3.5 p-3 bg-[#F4EDE3] border border-[#E3D4C4] space-y-1">
                 <div className="flex items-center gap-1.5 text-[9.5px] uppercase tracking-wider font-bold text-[#4A1622]">
                   <Award className="w-3.5 h-3.5" />
-                  <span>Artisan Purity & Hallmark Guarantee</span>
+                  <span>Artisanal Finish & Craftsmanship</span>
                 </div>
                 <p className="text-[10px] text-[#695442] leading-relaxed">
-                  Crafted with hypoallergenic brass base, multi-layer 18K gold electroplating, and micro-sealed anti-tarnish protective coating.
+                  Crafted with premium gold-toned finishes and intricate stone settings, designed for lasting beauty.
                 </p>
               </div>
 
@@ -345,10 +345,10 @@ export const ProductQuickViewModal: React.FC = () => {
               {/* Trust */}
               <div className="flex items-center justify-around text-[9.5px] text-[#7A6451] pt-0.5">
                 <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-[#4A1622]" /> 100% Certified Authentic
+                  <ShieldCheck className="w-3 h-3 text-[#4A1622]" /> Thoughtfully Handcrafted
                 </span>
                 <span className="flex items-center gap-1">
-                  <Truck className="w-3 h-3 text-[#4A1622]" /> Free Insured Delivery
+                  <Truck className="w-3 h-3 text-[#4A1622]" /> Free Delivery over ₹2,999
                 </span>
               </div>
             </div>
