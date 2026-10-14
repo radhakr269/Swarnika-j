@@ -1,0 +1,6 @@
+{
+  "name": "Swarnika — Timeless Jewellery",
+  "description": "Exquisite gold-plated and fashion jewellery for women and men, designed for modern moments and lasting impressions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
