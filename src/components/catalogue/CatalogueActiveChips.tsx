@@ -1,12 +1,14 @@
 import React from 'react';
 import { X, RotateCcw } from 'lucide-react';
-import { METAL_OPTIONS, PRICE_RANGE_PRESETS } from '../../hooks/useProductFiltering';
+import { METAL_OPTIONS, EFFECTIVE_MAX_PRICE } from '../../hooks/useProductFiltering';
 
 interface CatalogueActiveChipsProps {
   category: string;
   onClearCategory: () => void;
+  isCategoryLocked?: boolean;
   gender: 'all' | 'women' | 'men';
   onClearGender: () => void;
+  isGenderLocked?: boolean;
   selectedMetals: string[];
   onRemoveMetal: (metalId: string) => void;
   priceMin: number;
@@ -27,8 +29,10 @@ interface CatalogueActiveChipsProps {
 export const CatalogueActiveChips: React.FC<CatalogueActiveChipsProps> = ({
   category,
   onClearCategory,
+  isCategoryLocked = false,
   gender,
   onClearGender,
+  isGenderLocked = false,
   selectedMetals,
   onRemoveMetal,
   priceMin,
@@ -45,10 +49,13 @@ export const CatalogueActiveChips: React.FC<CatalogueActiveChipsProps> = ({
   totalCount,
   className = '',
 }) => {
-  const isPriceFiltered = priceMin > 0 || priceMax < 20000;
+  const isPriceFiltered = priceMin > 0 || priceMax < EFFECTIVE_MAX_PRICE;
+  const isCategoryFiltered = !isCategoryLocked && category !== 'all';
+  const isGenderFiltered = !isGenderLocked && gender !== 'all';
+
   const hasActiveFilters =
-    category !== 'all' ||
-    gender !== 'all' ||
+    isCategoryFiltered ||
+    isGenderFiltered ||
     selectedMetals.length > 0 ||
     isPriceFiltered ||
     inStockOnly ||
@@ -61,24 +68,33 @@ export const CatalogueActiveChips: React.FC<CatalogueActiveChipsProps> = ({
 
   const formatCategoryLabel = (cat: string) => {
     switch (cat) {
-      case 'women': return "Women's Collection";
-      case 'men': return "Men's Collection";
-      case 'necklaces': return 'Necklaces & Pendants';
-      case 'earrings': return 'Earrings & Hoops';
-      case 'rings': return 'Rings & Bands';
-      case 'bracelets': return 'Bracelets & Cuffs';
-      default: return cat.charAt(0).toUpperCase() + cat.slice(1);
+      case 'women':
+        return "Women's Collection";
+      case 'men':
+        return "Men's Collection";
+      case 'necklaces':
+        return 'Necklaces & Pendants';
+      case 'earrings':
+        return 'Earrings & Hoops';
+      case 'rings':
+        return 'Rings & Bands';
+      case 'bracelets':
+        return 'Bracelets & Cuffs';
+      default:
+        return cat.charAt(0).toUpperCase() + cat.slice(1);
     }
   };
 
   return (
-    <div className={`flex flex-wrap items-center gap-2 py-2.5 px-3 sm:px-4 bg-[#F5EFE6]/70 border border-[#E8DED1] text-xs ${className}`}>
+    <div
+      className={`flex flex-wrap items-center gap-2 py-2.5 px-3 sm:px-4 bg-[#F5EFE6]/70 border border-[#E8DED1] text-xs ${className}`}
+    >
       <span className="text-[11px] uppercase tracking-wider text-[#7A6553] font-medium mr-1 shrink-0">
         Active Filters:
       </span>
 
-      {/* Category Chip */}
-      {category !== 'all' && (
+      {/* Category Chip (only shown when not locked by route) */}
+      {isCategoryFiltered && (
         <button
           type="button"
           onClick={onClearCategory}
@@ -89,8 +105,8 @@ export const CatalogueActiveChips: React.FC<CatalogueActiveChipsProps> = ({
         </button>
       )}
 
-      {/* Gender Chip */}
-      {gender !== 'all' && (
+      {/* Gender Chip (only shown when not locked by route) */}
+      {isGenderFiltered && (
         <button
           type="button"
           onClick={onClearGender}
@@ -125,7 +141,8 @@ export const CatalogueActiveChips: React.FC<CatalogueActiveChipsProps> = ({
           className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-[#D5C6B5] text-[#201815] hover:border-[#4A101C] hover:text-[#4A101C] transition-colors cursor-pointer group text-[11px]"
         >
           <span>
-            Price: ₹{priceMin.toLocaleString('en-IN')} – ₹{priceMax >= 20000 ? '20,000+' : priceMax.toLocaleString('en-IN')}
+            Price: ₹{priceMin.toLocaleString('en-IN')} – ₹
+            {priceMax >= EFFECTIVE_MAX_PRICE ? '15,000+' : priceMax.toLocaleString('en-IN')}
           </span>
           <X className="w-3 h-3 text-[#7A6553] group-hover:text-[#4A101C]" />
         </button>
@@ -150,7 +167,7 @@ export const CatalogueActiveChips: React.FC<CatalogueActiveChipsProps> = ({
           onClick={onToggleBestseller}
           className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-[#D5C6B5] text-[#201815] hover:border-[#4A101C] hover:text-[#4A101C] transition-colors cursor-pointer group text-[11px]"
         >
-          <span>Bestsellers</span>
+          <span>Curated Bestsellers</span>
           <X className="w-3 h-3 text-[#7A6553] group-hover:text-[#4A101C]" />
         </button>
       )}

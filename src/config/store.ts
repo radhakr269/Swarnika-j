@@ -30,11 +30,20 @@ export const STORE_CONFIG = {
     email: 'concierge@swarnika.com',
   },
 
-  // Trust Highlights
+  // Trust Highlights (Accurate, restrained commercial standards)
   guarantees: [
-    { title: '100% Certified Authentic', description: 'BIS Hallmarked and certified precious plating' },
-    { title: 'Complimentary Insured Delivery', description: 'Tamper-evident transit packaging on orders over ₹2,999' },
-    { title: '7-Day Return Policy', description: 'Hassle-free inspection with prepaid collection' },
+    {
+      title: 'Thoughtfully Designed',
+      description: 'Artisanal jewellery crafted with premium gold-plated finishes and intricate detailing',
+    },
+    {
+      title: 'Complimentary Delivery',
+      description: 'Free courier shipping across India on all orders exceeding ₹2,999',
+    },
+    {
+      title: '7-Day Return Inspection',
+      description: 'Hassle-free return policy with dedicated courier pickup assistance',
+    },
   ],
 } as const;
 

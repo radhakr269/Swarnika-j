@@ -85,6 +85,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               <option value="featured">Featured Curation</option>
               <option value="low-high">Price: Low to High</option>
               <option value="high-low">Price: High to Low</option>
+              <option value="name-asc">Alphabetical: A to Z</option>
             </select>
           </div>
         </div>

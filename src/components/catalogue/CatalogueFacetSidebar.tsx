@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, RotateCcw, Filter, Check } from 'lucide-react';
-import { METAL_OPTIONS, PRICE_RANGE_PRESETS } from '../../hooks/useProductFiltering';
+import { ChevronDown, ChevronUp, RotateCcw, Filter } from 'lucide-react';
+import {
+  METAL_OPTIONS,
+  PRICE_RANGE_PRESETS,
+  EFFECTIVE_MAX_PRICE,
+} from '../../hooks/useProductFiltering';
 import { ALL_PRODUCTS } from '../../data/jewelryData';
 
 interface CatalogueFacetSidebarProps {
   category: string;
   onSelectCategory: (cat: string) => void;
+  isCategoryLocked?: boolean;
   gender: 'all' | 'women' | 'men';
   onSelectGender: (g: 'all' | 'women' | 'men') => void;
+  isGenderLocked?: boolean;
   selectedMetals: string[];
   onToggleMetal: (metalId: string) => void;
   priceMin: number;
@@ -25,7 +31,7 @@ interface CatalogueFacetSidebarProps {
 const CATEGORY_TABS = [
   { id: 'all', label: 'All Heirlooms' },
   { id: 'women', label: "Women's Collection" },
-  { id: 'men', label: "Men's Modern Strength" },
+  { id: 'men', label: "Men's Collection" },
   { id: 'necklaces', label: 'Necklaces & Pendants' },
   { id: 'earrings', label: 'Earrings & Hoops' },
   { id: 'rings', label: 'Rings & Bands' },
@@ -35,8 +41,10 @@ const CATEGORY_TABS = [
 export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
   category,
   onSelectCategory,
+  isCategoryLocked = false,
   gender,
   onSelectGender,
+  isGenderLocked = false,
   selectedMetals,
   onToggleMetal,
   priceMin,
@@ -63,7 +71,7 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  // Calculate live counts per category for the sidebar
+  // Live calculated counts per category
   const getCategoryCount = (catId: string) => {
     if (catId === 'all') return ALL_PRODUCTS.length;
     if (catId === 'women') return ALL_PRODUCTS.filter((p) => p.gender === 'women' || p.gender === 'unisex').length;
@@ -81,7 +89,7 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
         <div className="flex items-center gap-2 text-[#201815]">
           <Filter className="w-4 h-4 text-[#4A101C]" />
           <h2 className="font-serif-luxury text-lg tracking-wide uppercase font-semibold">
-            Filter Heirlooms
+            Filter Catalogue
           </h2>
         </div>
         {isFiltered && (
@@ -96,43 +104,53 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
         )}
       </div>
 
-      {/* 1. Category Facet */}
-      <div className="py-4">
-        <button
-          type="button"
-          onClick={() => toggleSection('category')}
-          className="w-full flex items-center justify-between text-left text-xs uppercase tracking-wider font-semibold text-[#201815] mb-2 cursor-pointer"
-        >
-          <span>Category & Silhouette</span>
-          {openSections.category ? <ChevronUp className="w-4 h-4 text-[#8C7662]" /> : <ChevronDown className="w-4 h-4 text-[#8C7662]" />}
-        </button>
+      {/* 1. Category Facet (Hide if category is locked by dedicated route, or show as locked) */}
+      {!isCategoryLocked && (
+        <div className="py-4">
+          <button
+            type="button"
+            onClick={() => toggleSection('category')}
+            className="w-full flex items-center justify-between text-left text-xs uppercase tracking-wider font-semibold text-[#201815] mb-2 cursor-pointer"
+          >
+            <span>Category & Silhouette</span>
+            {openSections.category ? (
+              <ChevronUp className="w-4 h-4 text-[#8C7662]" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-[#8C7662]" />
+            )}
+          </button>
 
-        {openSections.category && (
-          <div className="space-y-1 pt-1">
-            {CATEGORY_TABS.map((cat) => {
-              const isSelected = category === cat.id;
-              const count = getCategoryCount(cat.id);
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => onSelectCategory(cat.id)}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs transition-colors rounded-none cursor-pointer text-left ${
-                    isSelected
-                      ? 'bg-[#4A101C] text-white font-medium'
-                      : 'text-[#42362E] hover:bg-[#FAF7F2] hover:text-[#4A101C]'
-                  }`}
-                >
-                  <span className="truncate">{cat.label}</span>
-                  <span className={`text-[10px] tabular-nums shrink-0 ml-2 ${isSelected ? 'text-white/80' : 'text-[#8C7662]'}`}>
-                    ({count})
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+          {openSections.category && (
+            <div className="space-y-1 pt-1">
+              {CATEGORY_TABS.map((cat) => {
+                const isSelected = category === cat.id;
+                const count = getCategoryCount(cat.id);
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => onSelectCategory(cat.id)}
+                    className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs transition-colors rounded-none cursor-pointer text-left ${
+                      isSelected
+                        ? 'bg-[#4A101C] text-white font-medium'
+                        : 'text-[#42362E] hover:bg-[#FAF7F2] hover:text-[#4A101C]'
+                    }`}
+                  >
+                    <span className="truncate">{cat.label}</span>
+                    <span
+                      className={`text-[10px] tabular-nums shrink-0 ml-2 ${
+                        isSelected ? 'text-white/80' : 'text-[#8C7662]'
+                      }`}
+                    >
+                      ({count})
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 2. Price Range Facet */}
       <div className="py-4">
@@ -142,7 +160,11 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
           className="w-full flex items-center justify-between text-left text-xs uppercase tracking-wider font-semibold text-[#201815] mb-2 cursor-pointer"
         >
           <span>Price (INR ₹)</span>
-          {openSections.price ? <ChevronUp className="w-4 h-4 text-[#8C7662]" /> : <ChevronDown className="w-4 h-4 text-[#8C7662]" />}
+          {openSections.price ? (
+            <ChevronUp className="w-4 h-4 text-[#8C7662]" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-[#8C7662]" />
+          )}
         </button>
 
         {openSections.price && (
@@ -151,7 +173,7 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
             <div className="grid grid-cols-1 gap-1.5">
               {PRICE_RANGE_PRESETS.map((preset) => {
                 const isActive =
-                  (preset.id === 'all' && priceMin === 0 && priceMax >= 20000) ||
+                  (preset.id === 'all' && priceMin === 0 && priceMax >= EFFECTIVE_MAX_PRICE) ||
                   (preset.id !== 'all' && priceMin === preset.min && priceMax === preset.max);
 
                 return (
@@ -174,15 +196,15 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
             {/* Slider / Range indicator */}
             <div className="pt-2 border-t border-[#F0E6D8]">
               <div className="flex justify-between items-center text-[11px] text-[#7A6553] mb-1.5">
-                <span>Max Price:</span>
+                <span>Maximum Price:</span>
                 <span className="font-semibold text-[#201815] tabular-nums">
-                  ₹{priceMax >= 20000 ? '20,000+' : priceMax.toLocaleString('en-IN')}
+                  ₹{priceMax >= EFFECTIVE_MAX_PRICE ? '15,000+' : priceMax.toLocaleString('en-IN')}
                 </span>
               </div>
               <input
                 type="range"
                 min="2000"
-                max="20000"
+                max={EFFECTIVE_MAX_PRICE}
                 step="500"
                 value={priceMax}
                 onChange={(e) => onSetPriceRange(priceMin, Number(e.target.value))}
@@ -201,8 +223,12 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
           onClick={() => toggleSection('metals')}
           className="w-full flex items-center justify-between text-left text-xs uppercase tracking-wider font-semibold text-[#201815] mb-2 cursor-pointer"
         >
-          <span>Precious Metal & Craft</span>
-          {openSections.metals ? <ChevronUp className="w-4 h-4 text-[#8C7662]" /> : <ChevronDown className="w-4 h-4 text-[#8C7662]" />}
+          <span>Metal Plating & Finish</span>
+          {openSections.metals ? (
+            <ChevronUp className="w-4 h-4 text-[#8C7662]" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-[#8C7662]" />
+          )}
         </button>
 
         {openSections.metals && (
@@ -230,39 +256,45 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
         )}
       </div>
 
-      {/* 4. Gender / Target Audience */}
-      <div className="py-4">
-        <button
-          type="button"
-          onClick={() => toggleSection('gender')}
-          className="w-full flex items-center justify-between text-left text-xs uppercase tracking-wider font-semibold text-[#201815] mb-2 cursor-pointer"
-        >
-          <span>Audience & Wardrobe</span>
-          {openSections.gender ? <ChevronUp className="w-4 h-4 text-[#8C7662]" /> : <ChevronDown className="w-4 h-4 text-[#8C7662]" />}
-        </button>
+      {/* 4. Gender / Target Audience (Hidden if locked to women or men route) */}
+      {!isGenderLocked && (
+        <div className="py-4">
+          <button
+            type="button"
+            onClick={() => toggleSection('gender')}
+            className="w-full flex items-center justify-between text-left text-xs uppercase tracking-wider font-semibold text-[#201815] mb-2 cursor-pointer"
+          >
+            <span>Audience</span>
+            {openSections.gender ? (
+              <ChevronUp className="w-4 h-4 text-[#8C7662]" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-[#8C7662]" />
+            )}
+          </button>
 
-        {openSections.gender && (
-          <div className="grid grid-cols-3 gap-1 pt-1">
-            {(['all', 'women', 'men'] as const).map((g) => {
-              const isSelected = gender === g;
-              return (
-                <button
-                  key={g}
-                  type="button"
-                  onClick={() => onSelectGender(g)}
-                  className={`py-1.5 text-center text-xs uppercase tracking-wider font-medium border cursor-pointer ${
-                    isSelected
-                      ? 'border-[#4A101C] bg-[#4A101C] text-white'
-                      : 'border-[#E8DFD3] text-[#554336] hover:bg-[#FAF7F2]'
-                  }`}
-                >
-                  {g === 'all' ? 'All' : g}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+          {openSections.gender && (
+            <div className="grid grid-cols-3 gap-1 pt-1">
+              {(['all', 'women', 'men'] as const).map((g) => {
+                const isSelected = gender === g;
+                return (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => onSelectGender(g)}
+                    className={`py-1.5 text-center text-xs uppercase tracking-wider font-medium border cursor-pointer ${
+                      isSelected
+                        ? 'border-[#4A101C] bg-[#4A101C] text-white'
+                        : 'border-[#E8DFD3] text-[#554336] hover:bg-[#FAF7F2]'
+                    }`}
+                  >
+                    {g === 'all' ? 'All' : g}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 5. Availability & Curation Badges */}
       <div className="py-4">
@@ -272,13 +304,17 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
           className="w-full flex items-center justify-between text-left text-xs uppercase tracking-wider font-semibold text-[#201815] mb-2 cursor-pointer"
         >
           <span>Availability & Edition</span>
-          {openSections.availability ? <ChevronUp className="w-4 h-4 text-[#8C7662]" /> : <ChevronDown className="w-4 h-4 text-[#8C7662]" />}
+          {openSections.availability ? (
+            <ChevronUp className="w-4 h-4 text-[#8C7662]" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-[#8C7662]" />
+          )}
         </button>
 
         {openSections.availability && (
           <div className="space-y-2 pt-1">
             <label className="flex items-center justify-between px-2 py-1 text-xs text-[#42362E] hover:bg-[#FAF7F2] cursor-pointer">
-              <span>Ready for Immediate Dispatch</span>
+              <span>Ready for Dispatch (In Stock)</span>
               <input
                 type="checkbox"
                 checked={inStockOnly}
@@ -288,7 +324,7 @@ export const CatalogueFacetSidebar: React.FC<CatalogueFacetSidebarProps> = ({
             </label>
 
             <label className="flex items-center justify-between px-2 py-1 text-xs text-[#42362E] hover:bg-[#FAF7F2] cursor-pointer">
-              <span>Bestselling Pieces Only</span>
+              <span>Curated Bestsellers</span>
               <input
                 type="checkbox"
                 checked={bestsellerOnly}
