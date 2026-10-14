@@ -26,7 +26,7 @@ export const DualPromoBanner: React.FC = () => {
           {/* Left Promo Card: Crafted for Life's Special Moments */}
           <div className="group relative min-h-[200px] xs:min-h-[220px] sm:min-h-[280px] md:min-h-[320px] overflow-hidden flex flex-col justify-center p-4 xs:p-5 sm:p-7 md:p-8 shadow-xs border border-[#E8DECE]">
             <SafeImage
-              src="/public/assist/image/banners/promo_bridal.jpg"
+              src="/assist/image/banners/promo_bridal.jpg"
               alt="Stacked diamond rings on round stone pedestal with dried florals"
               fallbackCategory="Bridal & Wedding"
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -58,7 +58,7 @@ export const DualPromoBanner: React.FC = () => {
           {/* Right Promo Card: A Gift That Lasts Forever */}
           <div className="group relative min-h-[200px] xs:min-h-[220px] sm:min-h-[280px] md:min-h-[320px] overflow-hidden flex flex-col justify-center p-4 xs:p-5 sm:p-7 md:p-8 shadow-xs border border-[#E8DECE]">
             <SafeImage
-              src="/public/assist/image/banners/promo_everyday.jpg"
+              src="/assist/image/banners/promo_everyday.jpg"
               alt="Woman wearing teardrop diamond necklace next to luxury gift box"
               fallbackCategory="Fine Gifts"
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

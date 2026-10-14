@@ -67,7 +67,7 @@ export const SwarnikaHero: React.FC = () => {
         <div className="w-[44%] xs:w-[46%] sm:w-1/2 md:w-7/12 relative flex items-center justify-end overflow-hidden">
           {/* Model Image (CSS Selector 2: div:nth-of-type(2) > img:nth-of-type(1)) */}
           <img
-            src="/public/assist/image/banners/hero_banner.jpg"
+            src="/assist/image/banners/hero_banner.jpg"
             alt="Swarnika jewellery model wearing gold earrings and necklace"
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover object-center absolute inset-0"

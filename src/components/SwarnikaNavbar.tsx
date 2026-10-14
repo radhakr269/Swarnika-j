@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Heart, User, ShoppingBag, Menu, X, PhoneCall, Sparkles } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Search, Heart, ShoppingBag, Menu, X, PhoneCall } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { SwarnikaLogo } from './brand/SwarnikaLogo';
+import { ROUTES } from '../config/navigation';
 
 export const SwarnikaNavbar: React.FC = () => {
   const {
@@ -14,12 +17,23 @@ export const SwarnikaNavbar: React.FC = () => {
   } = useShop();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNav = (cat: string) => {
     setSelectedCategory(cat);
     setMobileMenuOpen(false);
-    const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
+
+    if (location.pathname !== ROUTES.HOME) {
+      navigate(ROUTES.HOME);
+      setTimeout(() => {
+        const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -29,46 +43,26 @@ export const SwarnikaNavbar: React.FC = () => {
           
           {/* Brand Wordmark with Luxury Logo on the Left */}
           <div className="flex items-center">
-            <a href="#" className="flex items-center gap-2 sm:gap-3 group">
-              {/* Luxury Geometric Gold & Maroon Emblem */}
-              <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 shrink-0 flex items-center justify-center text-[#4A1622] transition-transform duration-300 group-hover:rotate-45">
-                <svg viewBox="0 0 100 100" className="w-full h-full" fill="none">
-                  {/* Outer Diamond */}
-                  <polygon
-                    points="50,4 64,36 96,50 64,64 50,96 36,64 4,50 36,36"
-                    stroke="#4A1622"
-                    strokeWidth="3.5"
-                    fill="#4A1622"
-                    fillOpacity="0.08"
-                  />
-                  {/* Inner Geometric Star */}
-                  <polygon
-                    points="50,18 60,40 82,50 60,60 50,82 40,60 18,50 40,40"
-                    stroke="#A48257"
-                    strokeWidth="2.5"
-                    fill="none"
-                  />
-                  {/* Center Radiant Core */}
-                  <circle cx="50" cy="50" r="10" stroke="#4A1622" strokeWidth="2.5" fill="#FAF7F2" />
-                  <circle cx="50" cy="50" r="4.5" fill="#A48257" />
-                </svg>
-              </div>
-
-              {/* Brand Wordmark: SWARNIKA */}
+            <Link to={ROUTES.HOME} className="flex items-center gap-2 sm:gap-3 group">
+              <SwarnikaLogo size="md" animateHover={true} />
               <span className="font-serif-luxury text-lg xs:text-xl sm:text-2xl lg:text-[28px] tracking-[0.22em] sm:tracking-[0.24em] font-normal text-[#201815] uppercase leading-none">
                 SWARNIKA
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Center Navigation Links (Desktop) */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 text-xs lg:text-[13px] font-medium text-[#42362E]">
-            <a
-              href="#"
-              className="text-[#201815] py-1 border-b-[1.5px] border-[#201815] font-semibold"
+            <Link
+              to={ROUTES.HOME}
+              className={`py-1 transition-colors ${
+                location.pathname === ROUTES.HOME
+                  ? 'text-[#201815] border-b-[1.5px] border-[#201815] font-semibold'
+                  : 'hover:text-[#4A1622]'
+              }`}
             >
               Home
-            </a>
+            </Link>
             <button
               onClick={() => handleNav('all')}
               className="hover:text-[#4A1622] transition-colors py-1 cursor-pointer"
@@ -107,7 +101,7 @@ export const SwarnikaNavbar: React.FC = () => {
             </button>
           </nav>
 
-          {/* Right Action Icons (Search, Heart, User, Bag with badge) */}
+          {/* Right Action Icons (Search, Heart, Bag with badge) */}
           <div className="flex items-center space-x-2.5 xs:space-x-3 sm:space-x-4 md:space-x-5 text-[#2A201B]">
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -160,14 +154,14 @@ export const SwarnikaNavbar: React.FC = () => {
           <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#E8DECE]">
             <button
               onClick={() => handleNav('women')}
-              className="p-2.5 bg-white border border-[#E4D5C5] text-left text-xs font-semibold text-[#201815] uppercase tracking-wider flex items-center justify-between"
+              className="p-2.5 bg-white border border-[#E4D5C5] text-left text-xs font-semibold text-[#201815] uppercase tracking-wider flex items-center justify-between cursor-pointer"
             >
               <span>Shop Women</span>
               <span className="text-[10px] text-[#4A1622]">→</span>
             </button>
             <button
               onClick={() => handleNav('men')}
-              className="p-2.5 bg-white border border-[#E4D5C5] text-left text-xs font-semibold text-[#201815] uppercase tracking-wider flex items-center justify-between"
+              className="p-2.5 bg-white border border-[#E4D5C5] text-left text-xs font-semibold text-[#201815] uppercase tracking-wider flex items-center justify-between cursor-pointer"
             >
               <span>Shop Men</span>
               <span className="text-[10px] text-[#4A1622]">→</span>
@@ -175,19 +169,19 @@ export const SwarnikaNavbar: React.FC = () => {
           </div>
 
           <div className="py-2 space-y-2 text-xs font-medium text-[#201815]">
-            <button onClick={() => handleNav('all')} className="block text-left w-full py-1 hover:text-[#4A1622]">
+            <button onClick={() => handleNav('all')} className="block text-left w-full py-1 hover:text-[#4A1622] cursor-pointer">
               All Collections
             </button>
-            <button onClick={() => handleNav('necklaces')} className="block text-left w-full py-1 hover:text-[#4A1622]">
+            <button onClick={() => handleNav('necklaces')} className="block text-left w-full py-1 hover:text-[#4A1622] cursor-pointer">
               Necklaces & Pendants
             </button>
-            <button onClick={() => handleNav('earrings')} className="block text-left w-full py-1 hover:text-[#4A1622]">
+            <button onClick={() => handleNav('earrings')} className="block text-left w-full py-1 hover:text-[#4A1622] cursor-pointer">
               Earrings & Hoops
             </button>
-            <button onClick={() => handleNav('rings')} className="block text-left w-full py-1 hover:text-[#4A1622]">
+            <button onClick={() => handleNav('rings')} className="block text-left w-full py-1 hover:text-[#4A1622] cursor-pointer">
               Rings & Bands
             </button>
-            <button onClick={() => handleNav('bracelets')} className="block text-left w-full py-1 hover:text-[#4A1622]">
+            <button onClick={() => handleNav('bracelets')} className="block text-left w-full py-1 hover:text-[#4A1622] cursor-pointer">
               Bracelets & Cuffs
             </button>
             <button
@@ -195,7 +189,7 @@ export const SwarnikaNavbar: React.FC = () => {
                 setMobileMenuOpen(false);
                 setIsStoryOpen(true);
               }}
-              className="block text-left w-full py-1 hover:text-[#4A1622]"
+              className="block text-left w-full py-1 hover:text-[#4A1622] cursor-pointer"
             >
               Our Heritage & Craft
             </button>

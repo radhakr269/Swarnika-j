@@ -38,7 +38,7 @@ export const StoryModal: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center pt-2">
           <div className="rounded-none overflow-hidden aspect-[4/3] bg-[#EFE5D9] shadow-md border border-[#E5D7C7]">
             <SafeImage
-              src="/public/assist/image/banners/story_craftsmanship.jpg"
+              src="/assist/image/banners/story_craftsmanship.jpg"
               alt="Artisan jeweler at workbench"
               fallbackCategory="Heritage Workshop"
               className="w-full h-full object-cover"

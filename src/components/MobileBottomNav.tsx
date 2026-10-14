@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Grid, Heart, ShoppingBag, Sparkles } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { ROUTES } from '../config/navigation';
 
 export const MobileBottomNav: React.FC = () => {
   const {
@@ -12,21 +14,36 @@ export const MobileBottomNav: React.FC = () => {
     setSelectedCategory,
   } = useShop();
 
-  const scrollToCategories = () => {
-    setSelectedCategory('all');
-    const el = document.getElementById('categories-section') || document.getElementById('bestsellers-section');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleHomeClick = () => {
+    if (location.pathname !== ROUTES.HOME) {
+      navigate(ROUTES.HOME);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleShopClick = () => {
+    setSelectedCategory('all');
+    if (location.pathname !== ROUTES.HOME) {
+      navigate(ROUTES.HOME);
+      setTimeout(() => {
+        const el = document.getElementById('categories-section') || document.getElementById('bestsellers-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.getElementById('categories-section') || document.getElementById('bestsellers-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-md border-t border-[#EDE4D8] px-2 py-1.5 flex items-center justify-around shadow-lg">
       {/* Home */}
       <button
-        onClick={scrollToTop}
+        onClick={handleHomeClick}
         className="flex flex-col items-center justify-center p-1 text-[#42362E] hover:text-[#4A1622] transition-colors cursor-pointer"
       >
         <Home className="w-4 h-4 stroke-[1.6]" />
@@ -35,7 +52,7 @@ export const MobileBottomNav: React.FC = () => {
 
       {/* Categories */}
       <button
-        onClick={scrollToCategories}
+        onClick={handleShopClick}
         className="flex flex-col items-center justify-center p-1 text-[#42362E] hover:text-[#4A1622] transition-colors cursor-pointer"
       >
         <Grid className="w-4 h-4 stroke-[1.6]" />

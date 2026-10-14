@@ -82,7 +82,7 @@ export const NewsletterSection: React.FC = () => {
             <div className="md:col-span-5 relative flex items-center justify-center md:justify-end">
               <div className="relative w-full max-w-[280px] aspect-[4/3] rounded-none overflow-hidden shadow-sm border border-[#E8DECE]/60 bg-[#F4E9DD]">
                 <SafeImage
-                  src="/public/assist/image/banners/newsletter_gift.jpg"
+                  src="/assist/image/banners/newsletter_gift.jpg"
                   alt="Swarnika luxury gift packaging"
                   fallbackCategory="Luxury Packaging"
                   className="w-full h-full object-cover"

@@ -11,25 +11,25 @@ export const SwarnikaCategories: React.FC = () => {
       id: 'women',
       title: 'Women',
       subtitle: 'ELEGANCE EVERYDAY',
-      image: '/public/assist/image/categories/women.jpg',
+      image: '/assist/image/categories/women.jpg',
     },
     {
       id: 'men',
       title: 'Men',
       subtitle: 'MODERN STRENGTH',
-      image: '/public/assist/image/categories/men.jpg',
+      image: '/assist/image/categories/men.jpg',
     },
     {
       id: 'necklaces',
       title: 'Necklaces',
       subtitle: 'STATEMENTS THAT LAST',
-      image: '/public/assist/image/categories/necklaces.jpg',
+      image: '/assist/image/categories/necklaces.jpg',
     },
     {
       id: 'earrings',
       title: 'Earrings',
       subtitle: 'DETAILS THAT SHINE',
-      image: '/public/assist/image/categories/earrings.jpg',
+      image: '/assist/image/categories/earrings.jpg',
     },
   ];
 

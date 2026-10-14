@@ -45,7 +45,7 @@ export const OurStorySection: React.FC = () => {
               {/* Arched Window Image */}
               <div className="w-48 sm:w-64 md:w-72 lg:w-80 h-60 sm:h-76 md:h-88 lg:h-[380px] rounded-t-full rounded-b-none overflow-hidden shadow-md border-2 sm:border-4 border-white bg-[#EFE6DC]">
                 <SafeImage
-                  src="/public/assist/image/banners/story_craftsmanship.jpg"
+                  src="/assist/image/banners/story_craftsmanship.jpg"
                   alt="Master artisan jeweler hands crafting gold ring at bench"
                   fallbackCategory="Craftsmanship"
                   className="w-full h-full object-cover"

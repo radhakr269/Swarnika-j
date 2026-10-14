@@ -1,14 +1,27 @@
 import React from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Instagram, Facebook, Youtube, Share2 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { SwarnikaLogo } from './brand/SwarnikaLogo';
+import { ROUTES } from '../config/navigation';
 
 export const Footer: React.FC = () => {
   const { setSelectedCategory, setIsStoryOpen } = useShop();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleCategoryClick = (cat: string) => {
     setSelectedCategory(cat);
-    const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
+    if (location.pathname !== ROUTES.HOME) {
+      navigate(ROUTES.HOME);
+      setTimeout(() => {
+        const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const target = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -16,26 +29,11 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-8 pb-10 border-b border-[#EAE0D3]">
           
-          {/* Brand Info (Matching Screenshot) */}
+          {/* Brand Info */}
           <div className="lg:col-span-2 space-y-3.5">
-            <a href="#" className="inline-flex items-center gap-3 group">
-              <div className="w-8 h-8 shrink-0 flex items-center justify-center text-[#4A1622]">
-                <svg viewBox="0 0 100 100" className="w-full h-full" fill="none">
-                  <polygon points="50,4 64,36 96,50 64,64 50,96 36,64 4,50 36,36" stroke="#4A1622" strokeWidth="3" fill="#4A1622" fillOpacity="0.08" />
-                  <polygon points="50,18 60,40 82,50 60,60 50,82 40,60 18,50 40,40" stroke="#A48257" strokeWidth="2.5" fill="none" />
-                  <circle cx="50" cy="50" r="10" stroke="#4A1622" strokeWidth="2.5" fill="#FAF7F2" />
-                  <circle cx="50" cy="50" r="4.5" fill="#A48257" />
-                </svg>
-              </div>
-              <div>
-                <span className="block font-serif-luxury text-2xl sm:text-3xl tracking-[0.24em] font-normal text-[#2A231D] uppercase">
-                  SWARNIKA
-                </span>
-                <span className="block text-[8px] uppercase tracking-[0.38em] text-[#8A735E] font-sans -mt-0.5 font-medium">
-                  TIMELESS JEWELLERY
-                </span>
-              </div>
-            </a>
+            <Link to={ROUTES.HOME} className="inline-flex items-center gap-3 group">
+              <SwarnikaLogo size="md" showWordmark={true} wordmarkSize="md" animateHover={true} />
+            </Link>
 
             <p className="text-xs text-[#735F4C] max-w-xs font-light leading-relaxed">
               Exquisite gold-plated and fashion jewellery for women and men, designed for modern moments and lasting impressions.
@@ -89,37 +87,37 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#6E5A47]">
               <li>
-                <button onClick={() => handleCategoryClick('all')} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => handleCategoryClick('all')} className="hover:text-[#987853] transition-colors cursor-pointer">
                   All Jewelry
                 </button>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('rings')} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => handleCategoryClick('rings')} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Rings
                 </button>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('necklaces')} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => handleCategoryClick('necklaces')} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Necklaces
                 </button>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('earrings')} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => handleCategoryClick('earrings')} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Earrings
                 </button>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('bracelets')} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => handleCategoryClick('bracelets')} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Bracelets
                 </button>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('wedding')} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => handleCategoryClick('rings')} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Wedding
                 </button>
               </li>
               <li>
-                <button onClick={() => handleCategoryClick('gifts')} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => handleCategoryClick('necklaces')} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Gifts
                 </button>
               </li>
@@ -133,86 +131,94 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#6E5A47]">
               <li>
-                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors">
+                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Our Story
                 </button>
               </li>
               <li>
-                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors">
-                  Craftsmanship
+                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
+                  Craftsmanship & Atelier
                 </button>
               </li>
               <li>
-                <a href="#story-section" className="hover:text-[#987853] transition-colors">
+                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
+                  Hallmark & Quality
+                </button>
+              </li>
+              <li>
+                <button onClick={() => setIsStoryOpen(true)} className="hover:text-[#987853] transition-colors cursor-pointer">
                   Sustainability
-                </a>
-              </li>
-              <li>
-                <a href="#story-section" className="hover:text-[#987853] transition-colors">
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#story-section" className="hover:text-[#987853] transition-colors">
-                  Careers
-                </a>
+                </button>
               </li>
             </ul>
           </div>
 
-          {/* Customer Care */}
+          {/* Customer Care Column */}
           <div className="space-y-2.5">
             <h4 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#2A231D]">
-              Customer Care
+              Care & Service
             </h4>
             <ul className="space-y-1.5 text-xs text-[#6E5A47]">
               <li>
-                <a href="#" className="hover:text-[#987853] transition-colors">
-                  Track Order
-                </a>
+                <Link to={ROUTES.ORDERS} className="hover:text-[#987853] transition-colors">
+                  Track Your Order
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-[#987853] transition-colors">
-                  Returns & Exchanges
-                </a>
+                <span className="hover:text-[#987853] transition-colors cursor-pointer">
+                  Complimentary Shipping
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-[#987853] transition-colors">
-                  Size Guide
-                </a>
+                <span className="hover:text-[#987853] transition-colors cursor-pointer">
+                  7-Day Returns
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-[#987853] transition-colors">
-                  FAQs
-                </a>
+                <span className="hover:text-[#987853] transition-colors cursor-pointer">
+                  Ring Size Guide
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-[#987853] transition-colors">
-                  Shipping Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-[#987853] transition-colors">
-                  Terms of Service
-                </a>
+                <span className="hover:text-[#987853] transition-colors cursor-pointer">
+                  Jewellery Care
+                </span>
               </li>
             </ul>
           </div>
 
+          {/* Concierge Contact Column */}
+          <div className="space-y-2.5">
+            <h4 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#2A231D]">
+              Atelier Concierge
+            </h4>
+            <p className="text-xs text-[#6E5A47] leading-relaxed">
+              Have questions regarding sizing, custom finishes, or bespoke gifting?
+            </p>
+            <div className="space-y-1 text-xs text-[#6E5A47] pt-1">
+              <p>
+                <strong className="text-[#201815]">Phone:</strong> +91 98765 43210
+              </p>
+              <p>
+                <strong className="text-[#201815]">Email:</strong> concierge@swarnika.com
+              </p>
+              <p className="text-[10px] text-[#8C7662]">
+                Mon - Sat • 10:00 AM - 7:00 PM IST
+              </p>
+            </div>
+          </div>
+
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#8A7663]">
-          <p>© 2026 Swarnika. All rights reserved.</p>
-          <div className="flex items-center space-x-6">
-            <span className="font-serif-luxury text-xs text-[#A37E54] italic">
-              Crafted to Be Seen
-            </span>
-            <span>Privacy Policy</span>
-            <span>Terms & Conditions</span>
+        {/* Bottom Bar: Copyright & Terms */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#8C7662] gap-3">
+          <p>© {new Date().getFullYear()} SWARNIKA Fine Jewellery Pvt. Ltd. All rights reserved.</p>
+          <div className="flex items-center space-x-5">
+            <span className="hover:text-[#201815] transition-colors cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-[#201815] transition-colors cursor-pointer">Terms of Service</span>
+            <span className="hover:text-[#201815] transition-colors cursor-pointer">BIS Hallmark Info</span>
           </div>
         </div>
-
       </div>
     </footer>
   );

@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles } from 'lucide-react';
+import { getAssetUrl } from '../lib/assets';
 
-interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+export interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackCategory?: string;
   fallbackTitle?: string;
   fallbackSrc?: string;
   className?: string;
 }
-
-/**
- * Normalizes image paths so they work reliably across both Vite dev server
- * and production builds (where public/ directory files are served from the root).
- */
-const normalizeUrl = (url?: string): string | undefined => {
-  if (!url) return undefined;
-  if (url.startsWith('/public/')) {
-    return url.replace('/public/', '/');
-  }
-  return url;
-};
 
 export const SafeImage: React.FC<SafeImageProps> = ({
   src,
@@ -29,15 +18,15 @@ export const SafeImage: React.FC<SafeImageProps> = ({
   className = '',
   ...props
 }) => {
-  const normalizedPrimary = normalizeUrl(src);
-  const normalizedFallback = normalizeUrl(fallbackSrc);
+  const normalizedPrimary = src ? getAssetUrl(src) : undefined;
+  const normalizedFallback = fallbackSrc ? getAssetUrl(fallbackSrc) : undefined;
 
   const [currentSrc, setCurrentSrc] = useState<string | undefined>(normalizedPrimary);
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setCurrentSrc(normalizeUrl(src));
+    setCurrentSrc(src ? getAssetUrl(src) : undefined);
     setHasError(false);
     setIsLoaded(false);
   }, [src]);

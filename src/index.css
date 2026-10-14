@@ -1,10 +1,79 @@
 @import "tailwindcss";
 
+@theme {
+  /* SWARNIKA Luxury Design Palette */
+  --color-luxury-ivory: #F8F4EE;
+  --color-luxury-champagne: #ECE0D1;
+  --color-luxury-champagne-light: #F4EDE4;
+  --color-luxury-burgundy: #4A101C;
+  --color-luxury-burgundy-hover: #350B14;
+  --color-luxury-gold: #A77B3D;
+  --color-luxury-gold-light: #C9A875;
+  --color-luxury-espresso: #201914;
+  --color-luxury-charcoal: #2D2621;
+  --color-luxury-muted: #7A6553;
+  --color-luxury-border: #E8DED1;
+
+  /* Typography Families */
+  --font-serif-luxury: 'Italiana', 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-display-luxury: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-script-luxury: 'Alex Brush', 'Great Vibes', cursive;
+  --font-sans-luxury: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* Layout dimensions */
+  --spacing-header-height: 4.5rem;
+  --spacing-bottom-nav-height: 3.5rem;
+  --spacing-container-max: 80rem;
+}
+
+:root {
+  /* Semantic Tokens */
+  --bg-primary: #FAF7F2;
+  --bg-secondary: #F5EFE6;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FAF8F5;
+
+  --text-primary: #201815;
+  --text-secondary: #42362E;
+  --text-muted: #7A6553;
+  --text-inverse: #FFFFFF;
+
+  --accent-burgundy: #4A101C;
+  --accent-burgundy-subtle: #4A1622;
+  --accent-gold: #A77B3D;
+  --accent-gold-champagne: #ECE0D1;
+
+  --border-primary: #E8DED1;
+  --border-secondary: #DFD1C1;
+  --border-focus: #4A101C;
+
+  --hover-surface: #F2E8DC;
+  --focus-ring: rgba(74, 16, 28, 0.35);
+
+  --shadow-luxury-subtle: 0 1px 3px rgba(32, 24, 21, 0.05);
+  --shadow-luxury-card: 0 4px 20px -2px rgba(32, 24, 21, 0.06);
+  --shadow-luxury-modal: 0 20px 40px -8px rgba(32, 24, 21, 0.25);
+
+  /* Dimensions */
+  --header-height: 4.5rem;
+  --mobile-nav-height: 3.5rem;
+  --max-content-width: 80rem;
+
+  /* Z-Index Hierarchy */
+  --z-header: 40;
+  --z-mobile-nav: 40;
+  --z-drawer: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+}
+
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    background-color: #FAF6F0;
-    color: #2D2621;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -41,4 +110,13 @@ html {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #B69E83;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
