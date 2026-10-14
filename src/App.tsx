@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ShopProvider } from './context/ShopContext';
 import { AppLayout } from './components/layout/AppLayout';
 import { HomePage } from './pages/HomePage';
+import { ShopCataloguePage } from './pages/ShopCataloguePage';
 import { RoutePlaceholderPage } from './pages/RoutePlaceholderPage';
 
 export default function App() {
@@ -19,12 +20,12 @@ export default function App() {
             {/* Storefront Homepage (9 original sections in exact order) */}
             <Route index element={<HomePage />} />
 
-            {/* Catalogue & Category Architecture (Phases 4-6) */}
-            <Route path="shop" element={<RoutePlaceholderPage />} />
-            <Route path="women" element={<RoutePlaceholderPage />} />
-            <Route path="men" element={<RoutePlaceholderPage />} />
+            {/* Catalogue & Category Architecture (Phase 4: Shop All, Women, Men, Category) */}
+            <Route path="shop" element={<ShopCataloguePage mode="shop" />} />
+            <Route path="women" element={<ShopCataloguePage mode="women" />} />
+            <Route path="men" element={<ShopCataloguePage mode="men" />} />
             <Route path="collections" element={<RoutePlaceholderPage />} />
-            <Route path="category/:slug" element={<RoutePlaceholderPage />} />
+            <Route path="category/:slug" element={<ShopCataloguePage mode="category" />} />
             <Route path="product/:slug" element={<RoutePlaceholderPage />} />
 
             {/* Shopping & Acquisition Architecture (Phases 7-8) */}
