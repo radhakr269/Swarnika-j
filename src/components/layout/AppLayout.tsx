@@ -18,7 +18,7 @@ import { ToastContainer } from '../ToastContainer';
  */
 export const AppLayout: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#201815] flex flex-col font-sans-luxury pb-14 md:pb-0">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#201815] flex flex-col font-sans-luxury pb-[calc(3.75rem+env(safe-area-inset-bottom,0px))] md:pb-0">
       {/* Shared Header Navigation */}
       <SwarnikaNavbar />
 

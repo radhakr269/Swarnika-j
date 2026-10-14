@@ -25,11 +25,9 @@ export const STORE_CONFIG = {
     locale: 'en-IN',
   },
 
-  // Contact & Concierge
+  // Contact & Concierge (verified email channel only)
   concierge: {
-    phone: '+91 98765 43210',
     email: 'concierge@swarnika.com',
-    hours: 'Mon - Sat, 10:00 AM - 7:00 PM IST',
   },
 
   // Trust Highlights

@@ -31,6 +31,7 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: 'Shop All', href: ROUTES.SHOP, categoryFilter: 'all' },
   { label: 'Women', href: ROUTES.WOMEN, categoryFilter: 'women' },
   { label: 'Men', href: ROUTES.MEN, categoryFilter: 'men' },
+  { label: 'Collections', href: ROUTES.COLLECTIONS },
   { label: 'Necklaces', href: ROUTES.CATEGORY('necklaces'), categoryFilter: 'necklaces' },
   { label: 'Rings', href: ROUTES.CATEGORY('rings'), categoryFilter: 'rings' },
   { label: 'Our Story', href: '#about-section', isAction: true },

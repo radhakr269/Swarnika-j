@@ -1,98 +1,191 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { useShop } from '../context/ShopContext';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { ROUTES } from '../config/navigation';
 
 export const SwarnikaHero: React.FC = () => {
-  const { setSelectedCategory } = useShop();
-
-  const handleNav = (cat: string) => {
-    setSelectedCategory(cat);
-    const el = document.getElementById('bestsellers-section') || document.getElementById('categories-section');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <section className="relative w-full bg-[#F5EFE6] border-b border-[#E8DED1] overflow-hidden">
-      {/* Edge-to-Edge full width container matching reference image */}
-      <div className="w-full flex flex-row items-stretch justify-between min-h-[290px] xs:min-h-[320px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[590px] xl:min-h-[640px]">
+    <section className="relative w-full bg-[#FAF7F2] border-b border-[#E8DED1] overflow-hidden">
+      {/* ─────────────────────────────────────────────────────────────
+          DESKTOP & TABLET VIEWPORT (md and above: min-h-[620px] - 720px)
+          Matches Desktop Reference (Image 15)
+          ───────────────────────────────────────────────────────────── */}
+      <div className="max-w-[1536px] mx-auto hidden md:flex md:flex-row items-stretch justify-between min-h-[600px] lg:min-h-[660px] xl:min-h-[720px] relative">
         
-        {/* Left Side (CSS Selector 1): Typography & 3 CTA Buttons */}
-        <div className="w-[56%] xs:w-[54%] sm:w-1/2 md:w-5/12 z-20 flex flex-col justify-center pl-3 xs:pl-4 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 pr-1.5 xs:pr-2.5 py-3 sm:py-6 md:py-10 space-y-1.5 xs:space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-5">
-          {/* Kicker: MODERN HEIRLOOMS — */}
-          <div className="flex items-center gap-1.5 sm:gap-2 text-[7px] xs:text-[8px] sm:text-[9.5px] md:text-xs uppercase tracking-[0.2em] sm:tracking-[0.24em] text-[#6E5746] font-medium">
+        {/* Left Content Zone (approx 44% width) */}
+        <div className="w-[48%] lg:w-[44%] xl:w-[42%] z-20 flex flex-col justify-center pl-6 lg:pl-14 xl:pl-20 pr-4 py-12 lg:py-16 space-y-5 lg:space-y-6">
+          
+          {/* Eyebrow / Kicker */}
+          <div className="flex items-center gap-2.5 text-xs lg:text-[13px] uppercase tracking-[0.24em] text-[#6C5849] font-medium">
+            <Sparkles className="w-3.5 h-3.5 text-[#A77B3D]" />
             <span>MODERN HEIRLOOMS</span>
-            <span className="w-3 xs:w-4 sm:w-7 h-[1px] bg-[#6E5746]" />
+            <span className="w-10 h-[1px] bg-[#BFAFA0]" aria-hidden="true" />
           </div>
 
-          {/* Heading: Timeless Jewellery, Crafted to Be Seen. */}
-          <h1 className="font-serif-luxury text-[17px] xs:text-[21px] sm:text-3xl md:text-5xl lg:text-[56px] xl:text-[64px] font-normal tracking-tight text-[#4A1622] leading-[1.1]">
+          {/* Main Headline */}
+          <h1 className="font-serif-luxury text-4xl lg:text-5xl xl:text-[58px] font-normal tracking-tight text-[#4A101C] leading-[1.08] text-balance">
             Timeless Jewellery, <br />
             Crafted to Be Seen.
           </h1>
 
-          {/* Paragraph */}
-          <p className="text-[#635043] text-[7.5px] xs:text-[9px] sm:text-xs md:text-sm lg:text-[15px] max-w-[210px] sm:max-w-sm md:max-w-md font-light leading-relaxed">
+          {/* Description */}
+          <p className="text-[#574435] text-sm lg:text-[15px] xl:text-[16px] max-w-md font-light leading-relaxed">
             Exquisite gold-plated and fashion jewellery for women and men, designed for modern moments and lasting impressions.
           </p>
 
-          {/* 3 Buttons: Shop Women, Shop Men, Explore Collections */}
-          <div className="pt-1 sm:pt-2 flex flex-wrap gap-1 xs:gap-1.5 sm:gap-2.5">
-            <button
-              onClick={() => handleNav('women')}
-              className="group inline-flex items-center gap-1 sm:gap-1.5 bg-[#4A1622] hover:bg-[#381019] text-white text-[7px] xs:text-[8px] sm:text-[9.5px] md:text-xs uppercase tracking-[0.14em] sm:tracking-[0.18em] font-medium px-2 py-1 xs:px-2.5 xs:py-1.5 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-none transition-colors shadow-xs shrink-0 cursor-pointer"
+          {/* 3 Refined CTA Buttons (Shop Women -> /women, Shop Men -> /men, Explore Collections -> /collections) */}
+          <div className="pt-2 flex flex-wrap items-center gap-3">
+            <Link
+              to={ROUTES.WOMEN}
+              className="group inline-flex items-center justify-center gap-2 bg-[#4A101C] hover:bg-[#350B14] text-white text-xs uppercase tracking-[0.18em] font-medium px-5 py-3.5 transition-all shadow-xs hover:shadow-md cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#4A101C]/50"
             >
               <span>Shop Women</span>
-              <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform group-hover:translate-x-0.5" />
-            </button>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            </Link>
 
-            <button
-              onClick={() => handleNav('men')}
-              className="group inline-flex items-center gap-1 sm:gap-1.5 border border-[#BCADA0] hover:bg-[#EDE3D6] text-[#3A2E26] text-[7px] xs:text-[8px] sm:text-[9.5px] md:text-xs uppercase tracking-[0.14em] sm:tracking-[0.18em] font-medium px-2 py-1 xs:px-2.5 xs:py-1.5 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-none transition-colors shrink-0 cursor-pointer"
+            <Link
+              to={ROUTES.MEN}
+              className="group inline-flex items-center justify-center gap-2 bg-[#FAF7F2] hover:bg-[#EDE0D1] border border-[#BFAFA0] text-[#201914] text-xs uppercase tracking-[0.18em] font-medium px-4.5 py-3.5 transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#4A101C]/50"
             >
               <span>Shop Men</span>
-              <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform group-hover:translate-x-0.5" />
-            </button>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            </Link>
 
-            <button
-              onClick={() => handleNav('all')}
-              className="group inline-flex items-center gap-1 sm:gap-1.5 border border-[#BCADA0] hover:bg-[#EDE3D6] text-[#3A2E26] text-[7px] xs:text-[8px] sm:text-[9.5px] md:text-xs uppercase tracking-[0.14em] sm:tracking-[0.18em] font-medium px-2 py-1 xs:px-2.5 xs:py-1.5 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-none transition-colors shrink-0 cursor-pointer"
+            <Link
+              to={ROUTES.COLLECTIONS}
+              className="group inline-flex items-center justify-center gap-2 bg-[#FAF7F2] hover:bg-[#EDE0D1] border border-[#BFAFA0] text-[#201914] text-xs uppercase tracking-[0.18em] font-medium px-4 py-3.5 transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#4A101C]/50"
             >
               <span>Explore Collections</span>
-              <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform group-hover:translate-x-0.5" />
-            </button>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
+
         </div>
 
-        {/* Right Side: Model Image (CSS Selector 2) & Circular Badge */}
-        <div className="w-[44%] xs:w-[46%] sm:w-1/2 md:w-7/12 relative flex items-center justify-end overflow-hidden">
-          {/* Model Image (CSS Selector 2: div:nth-of-type(2) > img:nth-of-type(1)) */}
+        {/* Right Image Zone (approx 56% width with seamless gradient edge) */}
+        <div className="w-[52%] lg:w-[56%] xl:w-[58%] relative flex items-center justify-end overflow-hidden">
           <img
             src="/assist/image/banners/hero_banner.jpg"
-            alt="Swarnika jewellery model wearing gold earrings and necklace"
+            alt="Swarnika jewellery campaign featuring master-crafted gold necklace and earrings"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover object-center absolute inset-0"
+            className="w-full h-full object-cover object-[center_28%] absolute inset-0"
             style={{
-              maskImage: 'linear-gradient(to right, transparent 0%, black 14%, black 90%, transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 14%, black 90%, transparent 100%)',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 95%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 95%, transparent 100%)',
             }}
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-[#F5EFE6] via-transparent to-[#F5EFE6]/15 pointer-events-none" />
+          {/* Ambient warm gradient scrim for soft lighting transition */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F2] via-transparent to-[#FAF7F2]/10 pointer-events-none" />
 
-          {/* Circular Badge on the right: "JEWELLERY FOR BRIGHTER TOMORROWS" */}
-          <div className="relative z-30 pointer-events-none select-none text-center pr-2 xs:pr-3 sm:pr-6 md:pr-10 lg:pr-14">
-            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-22 sm:h-22 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border border-[#BFAFA0] bg-[#FAF6F0]/90 backdrop-blur-xs flex flex-col items-center justify-center p-1 sm:p-2 text-[#4A1622] shadow-xs">
-              <span className="text-[5px] xs:text-[6px] sm:text-[7.5px] md:text-[9px] uppercase tracking-[0.16em] sm:tracking-[0.2em] font-medium leading-tight">
-                JEWELLERY FOR
+          {/* Circular Badge: JEWELLERY FOR BRIGHTER TOMORROWS (Desktop, matching Reference Image 15) */}
+          <div className="absolute top-12 lg:top-16 right-8 lg:right-16 z-20 pointer-events-none select-none">
+            <div className="w-26 h-26 lg:w-30 lg:h-30 xl:w-32 xl:h-32 rounded-full border border-[#BFAFA0]/80 bg-[#FAF7F2]/88 backdrop-blur-xs flex flex-col items-center justify-center p-2 text-center shadow-xs">
+              <span className="w-6 h-[0.75px] bg-[#A77B3D] mb-1.5" />
+              <span className="text-[7.5px] lg:text-[8px] uppercase tracking-[0.22em] text-[#6C5849] font-medium leading-tight">
+                JEWELLERY
               </span>
-              <span className="text-[6px] xs:text-[7.5px] sm:text-[9px] md:text-[11px] uppercase tracking-[0.18em] sm:tracking-[0.22em] font-serif font-bold text-[#4A1622] leading-tight my-0.5">
-                BRIGHTER
+              <span className="text-[8.5px] lg:text-[9.5px] uppercase tracking-[0.2em] font-serif-luxury text-[#4A101C] font-semibold leading-tight my-0.5">
+                FOR BRIGHTER
               </span>
-              <span className="text-[5px] xs:text-[6px] sm:text-[7.5px] md:text-[9px] uppercase tracking-[0.16em] sm:tracking-[0.2em] font-medium leading-tight">
+              <span className="text-[7.5px] lg:text-[8px] uppercase tracking-[0.22em] text-[#6C5849] font-medium leading-tight">
                 TOMORROWS
               </span>
+              <span className="w-6 h-[0.75px] bg-[#A77B3D] mt-1.5" />
             </div>
           </div>
+        </div>
+
+      </div>
+
+      {/* ─────────────────────────────────────────────────────────────
+          MOBILE VIEWPORT (< md: 320px - 767px)
+          Matches Mobile Reference (Image 8)
+          Features prominent jewellery imagery with circular badge,
+          followed by high-legibility editorial text zone and 44px+ CTAs.
+          ───────────────────────────────────────────────────────────── */}
+      <div className="md:hidden flex flex-col w-full bg-[#FAF7F2]">
+        
+        {/* Mobile Visual Header with Image & Circular Badge */}
+        <div className="relative w-full aspect-[4/3] xs:aspect-[16/11] bg-[#EFE5D8] overflow-hidden">
+          <img
+            src="/assist/image/banners/hero_banner.jpg"
+            alt="Swarnika jewellery campaign featuring master-crafted gold necklace and earrings"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-[center_25%]"
+          />
+
+          {/* Circular Floating Badge (Mobile Top-Right, matching Reference Image 8) */}
+          <div className="absolute top-3.5 right-3.5 z-10 pointer-events-none select-none">
+            <div className="w-20 h-20 rounded-full border border-[#BFAFA0]/90 bg-[#FAF7F2]/90 backdrop-blur-xs flex flex-col items-center justify-center p-1.5 text-center shadow-xs">
+              <span className="w-4 h-[0.75px] bg-[#A77B3D] mb-1" />
+              <span className="text-[6.5px] uppercase tracking-[0.2em] text-[#6C5849] font-medium leading-tight">
+                JEWELLERY
+              </span>
+              <span className="text-[7.5px] uppercase tracking-[0.18em] font-serif-luxury text-[#4A101C] font-semibold leading-tight my-0.5">
+                FOR BRIGHTER
+              </span>
+              <span className="text-[6.5px] uppercase tracking-[0.2em] text-[#6C5849] font-medium leading-tight">
+                TOMORROWS
+              </span>
+              <span className="w-4 h-[0.75px] bg-[#A77B3D] mt-1" />
+            </div>
+          </div>
+
+          {/* Bottom subtle edge blend to ivory text zone */}
+          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#FAF7F2] to-transparent pointer-events-none" />
+        </div>
+
+        {/* Mobile Editorial Text Zone */}
+        <div className="px-4 xs:px-5 py-5 xs:py-6 flex flex-col space-y-3.5 bg-[#FAF7F2]">
+          
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-[#6C5849] font-medium">
+            <Sparkles className="w-3 h-3 text-[#A77B3D]" />
+            <span>MODERN HEIRLOOMS</span>
+            <span className="w-8 h-[1px] bg-[#BFAFA0]" aria-hidden="true" />
+          </div>
+
+          {/* Heading (32px to 38px, bold, prominent) */}
+          <h1 className="font-serif-luxury text-[32px] xs:text-[36px] font-normal tracking-tight text-[#4A101C] leading-[1.1] text-balance">
+            Timeless Jewellery, <br />
+            Crafted to Be Seen.
+          </h1>
+
+          {/* Description (14px, readable) */}
+          <p className="text-[#574435] text-[13.5px] xs:text-[14.5px] font-light leading-relaxed">
+            Exquisite gold-plated and fashion jewellery for women and men, designed for modern moments and lasting impressions.
+          </p>
+
+          {/* Mobile CTA Stack with 44px+ touch targets */}
+          <div className="pt-2 flex flex-col gap-2.5">
+            <Link
+              to={ROUTES.WOMEN}
+              className="min-h-[46px] inline-flex items-center justify-center gap-2 bg-[#4A101C] hover:bg-[#350B14] text-white text-xs uppercase tracking-[0.18em] font-medium px-5 py-3 transition-colors shadow-xs"
+            >
+              <span>Shop Women</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                to={ROUTES.MEN}
+                className="min-h-[44px] inline-flex items-center justify-center gap-1.5 bg-[#FAF7F2] border border-[#BFAFA0] text-[#201914] text-[11px] uppercase tracking-[0.16em] font-medium px-3 py-2.5 transition-colors"
+              >
+                <span>Shop Men</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+
+              <Link
+                to={ROUTES.COLLECTIONS}
+                className="min-h-[44px] inline-flex items-center justify-center gap-1.5 bg-[#FAF7F2] border border-[#BFAFA0] text-[#201914] text-[11px] uppercase tracking-[0.16em] font-medium px-3 py-2.5 transition-colors"
+              >
+                <span>Collections</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+          </div>
+
         </div>
 
       </div>

@@ -197,13 +197,10 @@ export const Footer: React.FC = () => {
             </p>
             <div className="space-y-1 text-xs text-[#6E5A47] pt-1">
               <p>
-                <strong className="text-[#201815]">Phone:</strong> +91 98765 43210
-              </p>
-              <p>
                 <strong className="text-[#201815]">Email:</strong> concierge@swarnika.com
               </p>
-              <p className="text-[10px] text-[#8C7662]">
-                Mon - Sat • 10:00 AM - 7:00 PM IST
+              <p className="text-[11px] text-[#8C7662]">
+                Certified Heritage Atelier & Customer Support
               </p>
             </div>
           </div>
