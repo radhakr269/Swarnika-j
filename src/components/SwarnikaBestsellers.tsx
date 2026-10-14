@@ -5,7 +5,7 @@ import { useShop } from '../context/ShopContext';
 import { ALL_PRODUCTS, Product } from '../data/jewelryData';
 import { ProductCard } from './product/ProductCard';
 import { ProductFilters } from './product/ProductFilters';
-import { SortOption } from '../hooks/useProductFiltering';
+import { useProductFiltering } from '../hooks/useProductFiltering';
 import { ROUTES } from '../config/navigation';
 
 export const SwarnikaBestsellers: React.FC = () => {
@@ -18,10 +18,23 @@ export const SwarnikaBestsellers: React.FC = () => {
     setSelectedCategory,
   } = useShop();
 
-  const [activeSort, setActiveSort] = useState<SortOption>('featured');
+  // Task 4: useProductFiltering is the SINGLE shared source of filtering and sorting
+  const {
+    category,
+    setCategory,
+    sortBy,
+    setSortBy,
+    filteredProducts,
+    resetFilters,
+  } = useProductFiltering(ALL_PRODUCTS, {
+    externalCategory: selectedCategory,
+    onCategoryChange: setSelectedCategory,
+    initialSort: 'featured',
+  });
+
   const [addedId, setAddedId] = useState<string | null>(null);
 
-  // Category filter tabs with counts calculated dynamically from ALL_PRODUCTS
+  // Dynamic filter tabs with exact item counts from ALL_PRODUCTS
   const filterTabs = [
     { id: 'all', label: 'All Pieces', count: ALL_PRODUCTS.length },
     {
@@ -56,30 +69,6 @@ export const SwarnikaBestsellers: React.FC = () => {
     },
   ];
 
-  // Filtering products based on context's selectedCategory
-  let displayProducts = ALL_PRODUCTS.filter((prod) => {
-    if (!selectedCategory || selectedCategory === 'all') return true;
-    if (selectedCategory === 'women') return prod.gender === 'women' || prod.gender === 'unisex';
-    if (selectedCategory === 'men') return prod.gender === 'men' || prod.gender === 'unisex';
-    return prod.category === selectedCategory;
-  });
-
-  // Sorting products
-  if (activeSort === 'low-high') {
-    displayProducts = [...displayProducts].sort((a, b) => a.price - b.price);
-  } else if (activeSort === 'high-low') {
-    displayProducts = [...displayProducts].sort((a, b) => b.price - a.price);
-  } else if (activeSort === 'rating') {
-    displayProducts = [...displayProducts].sort((a, b) => b.rating - a.rating || b.reviewsCount - a.reviewsCount);
-  } else if (activeSort === 'newest') {
-    displayProducts = [...displayProducts].sort((a, b) => (b.tag === 'New' ? 1 : 0) - (a.tag === 'New' ? 1 : 0));
-  } else {
-    // Featured / Bestseller priority: keep Bestsellers first
-    displayProducts = [...displayProducts].sort(
-      (a, b) => (b.tag === 'Bestseller' || b.isBestSeller ? 1 : 0) - (a.tag === 'Bestseller' || a.isBestSeller ? 1 : 0)
-    );
-  }
-
   const handleAddToCart = (prod: Product, e: React.MouseEvent) => {
     e.stopPropagation();
     addToCart(prod);
@@ -93,17 +82,17 @@ export const SwarnikaBestsellers: React.FC = () => {
   };
 
   return (
-    <section id="bestsellers-section" className="py-10 sm:py-14 md:py-18 bg-[#FAF7F2] border-b border-[#EAE1D4]">
+    <section id="bestsellers-section" className="py-8 sm:py-12 md:py-16 bg-[#FAF7F2] border-b border-[#EAE1D4]">
       <div className="w-full px-4 sm:px-8 lg:px-12">
         {/* Header row: BESTSELLING PIECES — and View All Bestsellers → */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8 pb-3 border-b border-[#E8DECE]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-7 pb-3 border-b border-[#E8DECE]">
           <div className="flex items-center gap-2 sm:gap-3">
             <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] text-[#221B17]">
               BESTSELLING PIECES
             </h2>
             <span className="w-8 sm:w-12 h-[1px] bg-[#4A1622]/40" />
             <span className="text-[10px] sm:text-xs text-[#827163] font-light">
-              ({displayProducts.length} curated designs • Still-Life & On-Model Dual View)
+              ({filteredProducts.length} curated designs)
             </span>
           </div>
 
@@ -120,16 +109,16 @@ export const SwarnikaBestsellers: React.FC = () => {
         {/* Reusable Product Filters Bar */}
         <ProductFilters
           tabs={filterTabs}
-          activeCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          activeSort={activeSort}
-          onSelectSort={setActiveSort}
-          itemCount={displayProducts.length}
+          activeCategory={category}
+          onSelectCategory={setCategory}
+          activeSort={sortBy}
+          onSelectSort={setSortBy}
+          itemCount={filteredProducts.length}
           className="mb-6 sm:mb-8"
         />
 
-        {/* Product Cards Grid: Balanced 4-Column Luxury Layout on Desktop */}
-        {displayProducts.length === 0 ? (
+        {/* Product Cards Grid: 4-Column Desktop, 2-Column Mobile */}
+        {filteredProducts.length === 0 ? (
           <div className="p-12 text-center bg-white border border-[#EDE2D4] my-6 space-y-3">
             <Sparkles className="w-8 h-8 text-[#9A7B56] mx-auto" />
             <h3 className="font-serif-luxury text-xl text-[#201815]">No jewellery pieces found</h3>
@@ -138,7 +127,7 @@ export const SwarnikaBestsellers: React.FC = () => {
             </p>
             <button
               type="button"
-              onClick={() => setSelectedCategory('all')}
+              onClick={resetFilters}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A1622] text-white text-xs uppercase tracking-wider font-medium hover:bg-[#381019] transition-colors cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -147,7 +136,7 @@ export const SwarnikaBestsellers: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5 md:gap-6">
-            {displayProducts.map((prod) => (
+            {filteredProducts.map((prod) => (
               <ProductCard
                 key={prod.id}
                 product={prod}

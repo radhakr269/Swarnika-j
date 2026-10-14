@@ -46,6 +46,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             const isActive = activeCategory === tab.id;
             return (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => onSelectCategory(tab.id)}
                 className={`px-3 py-1.5 text-[10.5px] sm:text-xs uppercase tracking-wider font-medium whitespace-nowrap transition-all rounded-none cursor-pointer ${
@@ -84,8 +85,6 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               <option value="featured">Featured Curation</option>
               <option value="low-high">Price: Low to High</option>
               <option value="high-low">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-              <option value="newest">New Arrivals</option>
             </select>
           </div>
         </div>

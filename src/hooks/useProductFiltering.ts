@@ -1,82 +1,85 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Product } from '../data/jewelryData';
 
-export type SortOption = 'featured' | 'low-high' | 'high-low' | 'rating' | 'newest';
+/**
+ * Supported, verified public sorting options:
+ * - 'featured': preserves exact original catalogue order
+ * - 'low-high': price ascending
+ * - 'high-low': price descending
+ */
+export type SortOption = 'featured' | 'low-high' | 'high-low';
 
-export interface FilterState {
-  category: string;
-  sortBy: SortOption;
-  selectedTag?: string | null;
-  minPrice?: number;
-  maxPrice?: number;
+export interface UseProductFilteringOptions {
+  initialCategory?: string;
+  externalCategory?: string;
+  onCategoryChange?: (category: string) => void;
+  initialSort?: SortOption;
 }
 
-export function useProductFiltering(allProducts: Product[], initialCategory = 'all') {
-  const [category, setCategory] = useState<string>(initialCategory);
-  const [sortBy, setSortBy] = useState<SortOption>('featured');
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+/**
+ * Single shared source of product filtering and sorting logic.
+ * Used directly by catalogue grids, SwarnikaBestsellers, and dedicated category pages.
+ */
+export function useProductFiltering(
+  allProducts: Product[],
+  options?: UseProductFilteringOptions
+) {
+  const [internalCategory, setInternalCategory] = useState<string>(
+    options?.externalCategory ?? options?.initialCategory ?? 'all'
+  );
+  const [sortBy, setSortBy] = useState<SortOption>(options?.initialSort ?? 'featured');
 
-  // Filtered and sorted products
+  // Synchronize when external category prop changes (from ShopContext or URL) without loops
+  useEffect(() => {
+    if (options?.externalCategory !== undefined) {
+      setInternalCategory(options.externalCategory);
+    }
+  }, [options?.externalCategory]);
+
+  const activeCategory = options?.externalCategory !== undefined ? options.externalCategory : internalCategory;
+
+  const setCategory = (cat: string) => {
+    setInternalCategory(cat);
+    options?.onCategoryChange?.(cat);
+  };
+
   const filteredProducts = useMemo(() => {
-    let result = allProducts.filter((product) => {
-      // Category filter
-      if (category && category !== 'all') {
-        if (category === 'women') {
-          if (product.gender !== 'women' && product.gender !== 'unisex') return false;
-        } else if (category === 'men') {
-          if (product.gender !== 'men' && product.gender !== 'unisex') return false;
-        } else if (product.category !== category) {
-          return false;
-        }
+    // 1. Filter items without mutating original allProducts array
+    const matched = allProducts.filter((product) => {
+      if (!activeCategory || activeCategory === 'all') return true;
+      if (activeCategory === 'women') {
+        return product.gender === 'women' || product.gender === 'unisex';
       }
-
-      // Tag filter
-      if (selectedTag && selectedTag !== 'all') {
-        if (product.tag !== selectedTag) return false;
+      if (activeCategory === 'men') {
+        return product.gender === 'men' || product.gender === 'unisex';
       }
-
-      return true;
+      return product.category === activeCategory;
     });
 
-    // Sort order
-    switch (sortBy) {
-      case 'low-high':
-        result = [...result].sort((a, b) => a.price - b.price);
-        break;
-      case 'high-low':
-        result = [...result].sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        result = [...result].sort((a, b) => b.rating - a.rating || b.reviewsCount - a.reviewsCount);
-        break;
-      case 'newest':
-        result = [...result].sort((a, b) => (b.tag === 'New' ? 1 : 0) - (a.tag === 'New' ? 1 : 0));
-        break;
-      case 'featured':
-      default:
-        // Keep catalog curation order with Bestsellers prioritized
-        result = [...result].sort((a, b) => (b.tag === 'Bestseller' ? 1 : 0) - (a.tag === 'Bestseller' ? 1 : 0));
-        break;
+    // 2. Sort items
+    if (sortBy === 'low-high') {
+      return [...matched].sort((a, b) => a.price - b.price);
+    }
+    if (sortBy === 'high-low') {
+      return [...matched].sort((a, b) => b.price - a.price);
     }
 
-    return result;
-  }, [allProducts, category, sortBy, selectedTag]);
+    // 'featured': strictly preserve the exact catalogue order of allProducts
+    return matched;
+  }, [allProducts, activeCategory, sortBy]);
 
   const resetFilters = () => {
     setCategory('all');
     setSortBy('featured');
-    setSelectedTag(null);
   };
 
-  const isFiltered = category !== 'all' || selectedTag !== null || sortBy !== 'featured';
+  const isFiltered = activeCategory !== 'all' || sortBy !== 'featured';
 
   return {
-    category,
+    category: activeCategory,
     setCategory,
     sortBy,
     setSortBy,
-    selectedTag,
-    setSelectedTag,
     filteredProducts,
     totalCount: allProducts.length,
     filteredCount: filteredProducts.length,
